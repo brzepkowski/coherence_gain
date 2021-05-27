@@ -1,44 +1,51 @@
 # This script does not introduce the normalization to the average gain function.
 # Also, it was calculated for an equal superposition (|+>, |->).
-
 from numpy import sin, cos, exp, pi, inf, sqrt, absolute
-from scipy.integrate import dblquad
+from scipy.integrate import nquad
 import sys
+import time
 
-sigma_e = 2
-sigma_h = 1
-h_bar = 1
-rho = 1
-N = 1
-V = 1
-c = 500
-k_B = 1.380649
-l_e = 1
-l_z = 4
-E = 2
+sigmas_difference = 9000 # [meV] = 9 [eV] = sigma_e - sigma_h
+h_bar = 0.6582119569 # [meV⋅ps] = 6.582119569 * 1e−16 [eV⋅s]
+N = 1 # [dimensionless constant]
+l_z = 1 # [nm]
+l_xy = 5 # [nm]
+c = 5.1 # [nm/ps]
+rho = 33454.4886 # [meV⋅ps/nm] = 5360 [kg/m^3]
+k_B = 0.08617333262145 # [meV/K]
+E = 1000 + 0.01046250062870621 # [meV] = 1 eV + sum |g_k|^2
+
+limit = 10000 # Limit for the number of subdivisions during integration
+options={'limit': limit}
+print("##### LIMIT: ", limit, " #####")
 
 # It's called "adjusted", because it is a result of multiplication of the constant comming from f_k
 # and constant coming from replacement of a sum with an integral.
 # WARNING 1: It also takes into account the power of 2, coming from |g_k|^2 = |f_k / (h_bar * omega_k)|^2!
 # WARNING 2: gaussian_squared() also returns the square of the gaussian, so it shuouldn't be squared while calculating the integrals!
 def adjusted_constant():
-    return (N/((2*pi)**3)) * (1/(2*rho*h_bar*(c**3))) * ((sigma_e - sigma_h)**2)
+    return (N/((2*pi)**3)) * (1/(2*rho*h_bar*(c**3))) * (sigmas_difference**2)
 
 def gaussian_squared(theta, r):
-    return exp(-(1/4) * ((l_z**2)*(r**2)*(cos(theta)**2) + (l_e**2)*(r**2)*(sin(theta)**2)))**2
+    return exp(-(1/4) * ((l_z**2)*(r**2)*(cos(theta)**2) + (l_xy**2)*(r**2)*(sin(theta)**2)))**2
+
+def calc_E():
+    integral, error = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r), [[0, pi], [0, inf]], opts=[options,options])
+    integral *= adjusted_constant()
+    print("integral: ", integral)
 
 def calc_W_one_part(t, T):
     # Calculate the imaginary integral
-    integral_imag, error_bound_imag = dblquad(lambda theta, r: cos(theta) * r * gaussian_squared(theta, r) * sin(c*r*t), -pi/2, pi/2, lambda r: 0, lambda r: inf)
+    integral_imag, error_bound_imag = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * sin(c*r*t), [[0, pi], [0, inf]], opts=[options,options])
     integral_imag *= 1j
     integral_imag *= adjusted_constant()
 
     # Calculate the real integral
     n_k = (1 / (k_B * T))
-    integral_real, error_bound_real = dblquad(lambda theta, r: cos(theta) * r * gaussian_squared(theta, r) * (cos(c*r*t) - 1)*(1 + (2*n_k)), -pi/2, pi/2, lambda r: 0, lambda r: inf)
+    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*t) - 1)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
-    print("### W_0 ###")
+    print("### W_one_part ###")
     print("integral_imag: ", integral_imag)
     print("integral_real: ", integral_real)
 
@@ -46,16 +53,16 @@ def calc_W_one_part(t, T):
 
 def calc_W_two_parts(t, tau, T):
     # Calculate the imaginary integral
-    integral_imag, error_bound_imag = dblquad(lambda theta, r: cos(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau)) + sin(t-(2*tau))), -pi/2, pi/2, lambda r: 0, lambda r: inf)
+    integral_imag, error_bound_imag = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau)) + sin(t-(2*tau))), [[0, pi], [0, inf]], opts=[options,options])
     integral_imag *= 1j
     integral_imag *= adjusted_constant()
 
     # Calculate the real integral
     n_k = (1 / (k_B * T))
-    integral_real, error_bound_real = dblquad(lambda theta, r: cos(theta) * r * gaussian_squared(theta, r) * ((2*cos(c*r*tau)) + (2*cos(c*r*(t-tau))) - cos(c*r*(t-(2*tau))) - 3)*(1 + (2*n_k)), -pi/2, pi/2, lambda r: 0, lambda r: inf)
+    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * ((2*cos(c*r*tau)) + (2*cos(c*r*(t-tau))) - cos(c*r*(t-(2*tau))) - 3)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
-    print("### W_0 ###")
+    print("### W_two_parts ###")
     print("integral_imag: ", integral_imag)
     print("integral_real: ", integral_real)
 
@@ -63,16 +70,16 @@ def calc_W_two_parts(t, tau, T):
 
 def calc_W_three_parts(t, tau, T):
     # Calculate the imaginary integral
-    integral_imag, error_bound_imag = dblquad(lambda theta, r: cos(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau)) + (2*sin(c*r*(t-(2*tau)))) - sin(c*r*(t-tau))), -pi/2, pi/2, lambda r: 0, lambda r: inf)
+    integral_imag, error_bound_imag = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau)) + (2*sin(c*r*(t-(2*tau)))) - sin(c*r*(t-tau))), [[0, pi], [0, inf]], opts=[options,options])
     integral_imag *= 1j
     integral_imag *= adjusted_constant()
 
     # Calculate the real integral
     n_k = (1 / (k_B * T))
-    integral_real, error_bound_real = dblquad(lambda theta, r: cos(theta) * r * gaussian_squared(theta, r) * (cos(c*r*(t-tau)) - 1)*(1 + (2*n_k)), -pi/2, pi/2, lambda r: 0, lambda r: inf)
+    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*(t-tau)) - 1)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
-    print("### W_0 ###")
+    print("### W_three_parts ###")
     print("integral_imag: ", integral_imag)
     print("integral_real: ", integral_real)
 
@@ -92,4 +99,4 @@ def g_av(t, tau, T):
 
     return first_part + second_part - third_part
 
-print("g_av: ", g_av(2,1,1))
+print("g_av: ", g_av(4,1,1))
