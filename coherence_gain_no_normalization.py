@@ -4,6 +4,8 @@ from numpy import sin, cos, exp, pi, inf, sqrt, absolute
 from scipy.integrate import nquad
 import sys
 import time
+import warnings
+warnings.filterwarnings("error")
 
 sigmas_difference = 9000 # [meV] = 9 [eV] = sigma_e - sigma_h
 h_bar = 0.6582119569 # [meV⋅ps] = 6.582119569 * 1e−16 [eV⋅s]
@@ -86,16 +88,21 @@ def calc_W_three_parts(t, tau, T):
     return exp(integral_imag)*exp(integral_real)
 
 def calc_g_av(t, tau, T):
-    W_basic = calc_W_one_part(t, T)
+    try:
+        W_basic = calc_W_one_part(t, T)
 
-    W_0 = calc_W_one_part(t-tau, T)
-    W_1 = calc_W_one_part(t-(2*tau), T)
-    W_2 = calc_W_two_parts(t, tau, T)
-    W_3 = calc_W_three_parts(t, tau, T)
+        W_0 = calc_W_one_part(t-tau, T)
+        W_1 = calc_W_one_part(t-(2*tau), T)
+        W_2 = calc_W_two_parts(t, tau, T)
+        W_3 = calc_W_three_parts(t, tau, T)
 
-    first_part = absolute((1/4)*(W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 + W_3))
-    second_part = absolute((1/4)*(-W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 - W_3))
-    third_part = absolute(W_basic)
+        first_part = absolute((1/4)*(W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 + W_3))
+        second_part = absolute((1/4)*(-W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 - W_3))
+        third_part = absolute(W_basic)
+    except Warning as w:
+        print(w)
+        print("Warning detected - execution terminated.")
+        sys.exit()
 
     return first_part + second_part - third_part
 
