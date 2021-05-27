@@ -32,7 +32,7 @@ def gaussian_squared(theta, r):
 def calc_E():
     integral, error = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r), [[0, pi], [0, inf]], opts=[options,options])
     integral *= adjusted_constant()
-    print("integral: ", integral)
+    # print("integral: ", integral)
 
 def calc_W_one_part(t, T):
     # Calculate the imaginary integral
@@ -45,9 +45,9 @@ def calc_W_one_part(t, T):
     integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*t) - 1)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
-    print("### W_one_part ###")
-    print("integral_imag: ", integral_imag)
-    print("integral_real: ", integral_real)
+    # print("### W_one_part ###")
+    # print("integral_imag: ", integral_imag)
+    # print("integral_real: ", integral_real)
 
     return exp(integral_imag)*exp(integral_real)
 
@@ -62,9 +62,9 @@ def calc_W_two_parts(t, tau, T):
     integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * ((2*cos(c*r*tau)) + (2*cos(c*r*(t-tau))) - cos(c*r*(t-(2*tau))) - 3)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
-    print("### W_two_parts ###")
-    print("integral_imag: ", integral_imag)
-    print("integral_real: ", integral_real)
+    # print("### W_two_parts ###")
+    # print("integral_imag: ", integral_imag)
+    # print("integral_real: ", integral_real)
 
     return exp(integral_imag)*exp(integral_real)
 
@@ -79,13 +79,13 @@ def calc_W_three_parts(t, tau, T):
     integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*(t-tau)) - 1)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
-    print("### W_three_parts ###")
-    print("integral_imag: ", integral_imag)
-    print("integral_real: ", integral_real)
+    # print("### W_three_parts ###")
+    # print("integral_imag: ", integral_imag)
+    # print("integral_real: ", integral_real)
 
     return exp(integral_imag)*exp(integral_real)
 
-def g_av(t, tau, T):
+def calc_g_av(t, tau, T):
     W_basic = calc_W_one_part(t, T)
 
     W_0 = calc_W_one_part(t-tau, T)
@@ -99,4 +99,7 @@ def g_av(t, tau, T):
 
     return first_part + second_part - third_part
 
-print("g_av: ", g_av(4,1,1))
+
+if __name__ == "__main__":
+    # Test calculation of g_av
+    print(calc_g_av(10, 1, 1))
