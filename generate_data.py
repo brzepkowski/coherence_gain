@@ -11,7 +11,7 @@ def main():
 
     T = float(sys.argv[1])
 
-    t_limit = 0.005
+    t_limit = 0.03
     t_step = 0.001
     tau_step = 0.001
 
@@ -31,6 +31,7 @@ def main():
         # plt.ylabel(r'$g_{av}$')
         # plt.xlabel(r'$\tau$')
         # plt.show()
+    print("t: ", format(t, '.3f'), " / ", format(ts[-1], '.3f'), " || tau: ", format(tau, '.3f'), " / ", format(taus[-1], '.3f'))
 
     filename = 'data_T=' + str(T) + '.pkl'
     with open(filename, 'wb') as file:

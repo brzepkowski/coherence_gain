@@ -17,7 +17,7 @@ rho = 33454.4886 # [meV⋅ps/nm] = 5360 [kg/m^3]
 k_B = 0.08617333262145 # [meV/K]
 E = 1000 + 0.01046250062870621 # [meV] = 1 eV + sum |g_k|^2
 
-limit = 10000 # Limit for the number of subdivisions during integration
+limit = 10000 # Limit for the number of subdivisions during integration. This value is way too big, but it doesn't increase the runtime.
 options={'limit': limit}
 print("##### LIMIT: ", limit, " #####")
 
