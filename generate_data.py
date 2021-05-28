@@ -11,7 +11,7 @@ def main():
 
     T = float(sys.argv[1])
 
-    t_limit = 0.03
+    t_limit = 0.3
     t_step = 0.001
     tau_step = 0.001
 
