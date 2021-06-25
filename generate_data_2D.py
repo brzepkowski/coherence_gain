@@ -11,7 +11,7 @@ def main():
 
     T = float(sys.argv[1])
 
-    t_limit = 0.3
+    t_limit = 0.01
     t_step = 0.001
     tau_step = 0.001
 
@@ -35,7 +35,7 @@ def main():
         filename = 'data_T=' + str(T) + '.pkl'
         with open(filename, 'wb') as file:
             pickle.dump(results, file)
-            
+
     print("t: ", format(t, '.3f'), " / ", format(ts[-1], '.3f'), " || tau: ", format(tau, '.3f'), " / ", format(taus[-1], '.3f'))
 
 if __name__ == "__main__":

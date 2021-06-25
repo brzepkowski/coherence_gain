@@ -15,7 +15,7 @@ l_xy = 5 # [nm]
 c = 5.1 # [nm/ps]
 rho = 33454.4886 # [meV⋅ps/nm] = 5360 [kg/m^3]
 k_B = 0.08617333262145 # [meV/K]
-E = 1000 + 0.01046250062870621 # [meV] = 1 eV + sum |g_k|^2
+E = 1000 # + 0.01046250062870621 # [meV] = 1 eV + sum |g_k|^2 <---- RECALCULATE ADDED VALUE!!!
 
 limit = 10000 # Limit for the number of subdivisions during integration. This value is way too big, but it doesn't increase the runtime.
 options={'limit': limit}
@@ -29,12 +29,17 @@ def adjusted_constant():
     return (N/((2*pi)**3)) * (1/(2*rho*h_bar*(c**3))) * (sigmas_difference**2)
 
 def gaussian_squared(theta, r):
-    return exp(-(1/4) * ((l_z**2)*(r**2)*(cos(theta)**2) + (l_xy**2)*(r**2)*(sin(theta)**2)))**2
+    return exp(-(1/2) * ((l_z**2)*(r**2)*(cos(theta)**2) + (l_xy**2)*(r**2)*(sin(theta)**2)))
 
 def calc_E():
     integral, error = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r), [[0, pi], [0, inf]], opts=[options,options])
     integral *= adjusted_constant()
     # print("integral: ", integral)
+
+def n_k(T, r):
+    beta = (1/(k_B*T))
+    z = exp(-beta*c*r*h_bar)
+    return z/(1-z)
 
 def calc_W_one_part(t, T):
     # Calculate the imaginary integral
@@ -43,8 +48,7 @@ def calc_W_one_part(t, T):
     integral_imag *= adjusted_constant()
 
     # Calculate the real integral
-    n_k = (1 / (k_B * T))
-    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*t) - 1)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
+    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*t) - 1)*(1 + (2*n_k(T, r))), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
     # print("### W_one_part ###")
@@ -60,8 +64,7 @@ def calc_W_two_parts(t, tau, T):
     integral_imag *= adjusted_constant()
 
     # Calculate the real integral
-    n_k = (1 / (k_B * T))
-    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * ((2*cos(c*r*tau)) + (2*cos(c*r*(t-tau))) - cos(c*r*(t-(2*tau))) - 3)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
+    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * ((2*cos(c*r*tau)) + (2*cos(c*r*(t-tau))) - cos(c*r*(t-(2*tau))) - 3)*(1 + (2*n_k(T, r))), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
     # print("### W_two_parts ###")
@@ -77,8 +80,7 @@ def calc_W_three_parts(t, tau, T):
     integral_imag *= adjusted_constant()
 
     # Calculate the real integral
-    n_k = (1 / (k_B * T))
-    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*(t-tau)) - 1)*(1 + (2*n_k)), [[0, pi], [0, inf]], opts=[options,options])
+    integral_real, error_bound_real = nquad(lambda theta, r: sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*(t-tau)) - 1)*(1 + (2*n_k(T, r))), [[0, pi], [0, inf]], opts=[options,options])
     integral_real *= adjusted_constant()
 
     # print("### W_three_parts ###")
@@ -87,7 +89,7 @@ def calc_W_three_parts(t, tau, T):
 
     return exp(integral_imag)*exp(integral_real)
 
-def calc_g_av(t, tau, T):
+def calc_g_av_components(t, tau, T):
     try:
         W_basic = calc_W_one_part(t, T)
 
@@ -96,17 +98,15 @@ def calc_g_av(t, tau, T):
         W_2 = calc_W_two_parts(t, tau, T)
         W_3 = calc_W_three_parts(t, tau, T)
 
-        first_part = absolute((1/4)*(W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 + W_3))
-        second_part = absolute((1/4)*(-W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 - W_3))
-        third_part = absolute(W_basic)
     except Warning as w:
         print(w)
         print("Warning detected - execution terminated.")
         sys.exit()
 
-    return first_part + second_part - third_part
+    return W_0, exp(-1j*E*tau/h_bar)*W_1, exp(1j*E*tau/h_bar)*W_2, W_3, exp(1j*E*tau/h_bar)
 
 
 if __name__ == "__main__":
     # Test calculation of g_av
-    print(calc_g_av(10, 1, 1))
+    # print(calc_g_av(10, 1, 1))
+    print(adjusted_constant())
