@@ -26,7 +26,7 @@ print("##### LIMIT: ", limit, " #####")
 # WARNING 1: It also takes into account the power of 2, coming from |g_k|^2 = |f_k / (h_bar * omega_k)|^2!
 # WARNING 2: gaussian_squared() also returns the square of the gaussian, so it shuouldn't be squared while calculating the integrals!
 def adjusted_constant():
-    return (N/((2*pi)**3)) * (1/(2*rho*h_bar*(c**3))) * (sigmas_difference**2)
+    return (N/((2*pi)**2)) * (1/(2*rho*h_bar*(c**3))) * (sigmas_difference**2)
 
 def gaussian_squared(theta, r):
     return exp(-(1/2) * ((l_z**2)*(r**2)*(cos(theta)**2) + (l_xy**2)*(r**2)*(sin(theta)**2)))
@@ -89,21 +89,37 @@ def calc_W_three_parts(t, tau, T):
 
     return exp(integral_imag)*exp(integral_real)
 
-def calc_g_av_components(t, tau, T):
+def calc_g_av(t, tau, T):
     try:
-        W_basic = calc_W_one_part(t, T)
+        W_t = calc_W_one_part(t, T)
+        W_tau = calc_W_one_part(tau, T)
 
         W_0 = calc_W_one_part(t-tau, T)
         W_1 = calc_W_one_part(t-(2*tau), T)
         W_2 = calc_W_two_parts(t, tau, T)
         W_3 = calc_W_three_parts(t, tau, T)
 
+        p_plus = 0.5*(1 + (exp(1j*E*tau/h_bar)*W_tau).real)
+        p_minus = 0.5*(1 - (exp(1j*E*tau/h_bar)*W_tau).real)
+        denominator_plus = absolute(p_plus)
+        denominator_minus = absolute(p_minus)
+
+        D_plus = absolute((1/4)*(W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 + W_3))/denominator_plus
+        D_minus = absolute((1/4)*(-W_0 + exp(-1j*E*tau/h_bar)*W_1 + exp(1j*E*tau/h_bar)*W_2 - W_3))/denominator_minus
+        D_t = absolute(W_t)
+
+        g_plus = (D_plus - D_t)/(1-D_t)
+        g_minus = (D_minus - D_t)/(1-D_t)
+
+        g_av = (p_plus*g_plus) + (p_minus*g_minus)
+
     except Warning as w:
         print(w)
         print("Warning detected - execution terminated.")
         sys.exit()
 
-    return W_0, exp(-1j*E*tau/h_bar)*W_1, exp(1j*E*tau/h_bar)*W_2, W_3, exp(1j*E*tau/h_bar)
+    # return D_plus, D_minus, D_t, p_plus, p_minus, g_av
+    return W_0, exp(-1j*E*tau/h_bar)*W_1, exp(1j*E*tau/h_bar)*W_2, W_3, exp(1j*E*tau/h_bar), D_plus, D_minus, D_t, p_plus, p_minus, g_av
 
 
 if __name__ == "__main__":
