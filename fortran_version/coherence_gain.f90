@@ -479,13 +479,13 @@ end function W_three_parts_real_0
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   g_av    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-real function g_av(t_time, tau_time, T_temp)
+subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
     implicit none
     real :: t_time, tau_time, T_temp
     real :: p_plus, p_minus, denominator_plus, denominator_minus
     real :: D_plus, D_minus, D_t
-    real :: g_plus, g_minus !, g_average
-    double complex :: W_t, W_tau, W_0, W_1, W_2, W_3
+    real :: g_plus, g_minus, g_av
+    double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     double complex, parameter :: i = cmplx(0, 1)
 
     W_t = W_one_part(t_time, T_temp)
@@ -493,8 +493,11 @@ real function g_av(t_time, tau_time, T_temp)
 
     W_0 = W_one_part(t_time-tau_time, T_temp)
     W_1 = W_one_part(t_time-(2*tau_time), T_temp)
+		W_1_phased = exp(-i*E*tau_time/h_bar)*W_1
     W_2 = W_two_parts(t_time, tau_time, T_temp)
+		W_2_phased = exp(i*E*tau_time/h_bar)*W_2
     W_3 = W_three_parts(t_time, tau_time, T_temp)
+		phase = exp(i*E*tau_time/h_bar)
 
     p_plus = 0.5*(1 + real(exp(i*E*tau_time/h_bar)*W_tau))
     p_minus = 0.5*(1 - real(exp(i*E*tau_time/h_bar)*W_tau))
@@ -509,28 +512,7 @@ real function g_av(t_time, tau_time, T_temp)
     g_minus = (D_minus - D_t)/(1-D_t)
 
     g_av = (p_plus*g_plus) + (p_minus*g_minus)
-    ! return W_0, W_1, exp(-1j*E*tau/h_bar)*W_1, W_2, exp(1j*E*tau/h_bar)*W_2, W_3, exp(1j*E*tau/h_bar), D_plus, D_minus, D_t, p_plus, p_minus, g_av
-end function g_av
+end subroutine g_average
 
 
 end module coherence_gain
-
-
-program main
-    use coherence_gain
-    implicit none
-    real :: t_time = 20
-    real :: tau_time
-    real :: tau_time_min = 6.
-    real :: tau_time_step = 0.00001
-    real :: T_temp = 70
-    integer :: iterator
-
-    open(1, file='g_av.dat', status='replace')
-
-    do iterator = 0, 1000
-        tau_time = tau_time_min + tau_time_step*iterator
-        ! print *, g_av(t_time, tau_time, T_temp)
-        write(1,*) tau_time, g_av(t_time, tau_time, T_temp)
-    end do
-end program main
