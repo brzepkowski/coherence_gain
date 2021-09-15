@@ -134,3 +134,7 @@ dmypy.json
 *.pdf
 *.csv
 *.pickle
+
+# Files with some reading materials
+materials
+
