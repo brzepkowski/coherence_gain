@@ -485,10 +485,11 @@ subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_
     real :: p_plus, p_minus, denominator_plus, denominator_minus
     real :: D_plus, D_minus, D_t
     real :: g_plus, g_minus, g_av
+		real :: licznik_plus, licznik_minus, mianownik_plus, mianownik_minus
     double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     double complex, parameter :: i = cmplx(0, 1)
 
-    W_t = W_one_part(t_time, T_temp)
+    W_t = W_one_part(t_time-tau_time, T_temp)
     W_tau = W_one_part(tau_time, T_temp)
 
     W_0 = W_one_part(t_time-tau_time, T_temp)
@@ -505,11 +506,66 @@ subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_
     denominator_minus = abs(p_minus)
 
     D_plus = abs(0.25*(W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 + W_3))/denominator_plus
+
+		print *, "W_0 + W_3:"
+		print *, W_0 + W_3
+
+		print *, "abs(W_1):"
+		print *, abs(W_1)
+
+		print *, "abs(W_2):"
+		print *, abs(W_2)
+
+		print *, "abs(exp(i*E*tau_time/h_bar)*W_tau):"
+		print *, abs(exp(i*E*tau_time/h_bar)*W_tau)
+
+		print *, "=================="
+
+		print *, "ŚRODEK:"
+		print *, (exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2)/2
+
+		print *, "p_plus_real:"
+		print *, real(exp(i*E*tau_time/h_bar)*W_tau)
+
+		licznik_plus = abs(0.25*(W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 + W_3))
+		mianownik_plus = denominator_plus
+
+		print *, "licznik_plus:"
+		print *, licznik_plus
+
+		print *, "mianownik_plus:"
+		print *, mianownik_plus
+
     D_minus = abs(0.25*(-W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 - W_3))/denominator_minus
+
+		licznik_minus = abs(0.25*(-W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 - W_3))
+		mianownik_minus = denominator_minus
+
+		print *, "licznik_minus:"
+		print *, licznik_minus
+
+		print *, "mianownik_minus:"
+		print *, mianownik_minus
+
     D_t = abs(W_t)
 
-    g_plus = (D_plus - D_t)/(1-D_t)
-    g_minus = (D_minus - D_t)/(1-D_t)
+		print *, "tau_time:"
+		print *, tau_time
+
+		print *, "t_time:"
+		print *, t_time
+
+    print *, "D_plus:"
+		print *, D_plus
+
+		print *, "D_minus:"
+		print *, D_minus
+
+		print *, "D_t:"
+		print *, D_t
+
+    g_plus = (D_plus - D_t)! /(1-D_t)
+    g_minus = (D_minus - D_t)! /(1-D_t)
 
     g_av = (p_plus*g_plus) + (p_minus*g_minus)
 end subroutine g_average

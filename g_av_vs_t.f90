@@ -26,40 +26,49 @@ program main
     ! Generate data for minimas of the g_av
     tau_time = tau_min_time
 
-    do taus_iterator = 0, num_of_different_taus-1
-        tau_time = tau_time + taus_iterator*500*period
-        t_time_min = tau_time + t_time_step
 
-        write(tau_time_string, '(f10.8)' )  tau_time
-        filename = "min_g_av_T="//T_temp_string//"_tau="//tau_time_string//".dat"
-        open(1, file=filename, status='replace')
+    t_time = tau_time
 
-        do iterator = 0, number_of_time_steps
-            print *, iterator, " / ", number_of_time_steps
-            t_time = t_time_min + t_time_step*iterator
-            call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
-                            W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
-            write(1,*) t_time, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase, D_plus, D_minus, D_t, p_plus, p_minus, g_av
-        end do
-    end do
+    call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
+                    W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
 
-    ! Generate data for maximas of the g_av
-    tau_time = tau_max_time
+    print *, "g_av: "
+    print *, g_av
 
-    do taus_iterator = 0, num_of_different_taus-1
-        tau_time = tau_time + taus_iterator*500*period
-        t_time_min = tau_time + t_time_step
-
-        write(tau_time_string, '(f10.8)' )  tau_time
-        filename = "max_g_av_T="//T_temp_string//"_tau="//tau_time_string//".dat"
-        open(1, file=filename, status='replace')
-
-        do iterator = 0, number_of_time_steps
-            print *, iterator, " / ", number_of_time_steps
-            t_time = t_time_min + t_time_step*iterator
-            call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
-                            W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
-            write(1,*) t_time, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase, D_plus, D_minus, D_t, p_plus, p_minus, g_av
-        end do
-    end do
+    ! do taus_iterator = 0, num_of_different_taus-1
+    !     tau_time = tau_time + taus_iterator*500*period
+    !     t_time_min = tau_time + t_time_step
+    !
+    !     write(tau_time_string, '(f10.8)' )  tau_time
+    !     filename = "min_g_av_T="//T_temp_string//"_tau="//tau_time_string//".dat"
+    !     open(1, file=filename, status='replace')
+    !
+    !     do iterator = 0, number_of_time_steps
+    !         print *, iterator, " / ", number_of_time_steps
+    !         t_time = t_time_min + t_time_step*iterator
+    !         call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
+    !                         W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
+    !         write(1,*) t_time, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase, D_plus, D_minus, D_t, p_plus, p_minus, g_av
+    !     end do
+    ! end do
+    !
+    ! ! Generate data for maximas of the g_av
+    ! tau_time = tau_max_time
+    !
+    ! do taus_iterator = 0, num_of_different_taus-1
+    !     tau_time = tau_time + taus_iterator*500*period
+    !     t_time_min = tau_time + t_time_step
+    !
+    !     write(tau_time_string, '(f10.8)' )  tau_time
+    !     filename = "max_g_av_T="//T_temp_string//"_tau="//tau_time_string//".dat"
+    !     open(1, file=filename, status='replace')
+    !
+    !     do iterator = 0, number_of_time_steps
+    !         print *, iterator, " / ", number_of_time_steps
+    !         t_time = t_time_min + t_time_step*iterator
+    !         call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
+    !                         W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
+    !         write(1,*) t_time, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase, D_plus, D_minus, D_t, p_plus, p_minus, g_av
+    !     end do
+    ! end do
 end program main
