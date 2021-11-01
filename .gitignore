@@ -135,4 +135,5 @@ dmypy.json
 *.csv
 *.pickle
 
-
+# Files storing results
+*.dat

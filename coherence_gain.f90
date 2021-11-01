@@ -119,6 +119,8 @@ real function W_one_part_imag(t_time)
     common /one_part_imag_values/r_val
     common /one_part_imag_values/t_time_val
 
+		! print *, "W_one_part_imag / t_time: ", t_time
+
     t_time_val = t_time
 
     call integral_infinite(W_one_part_imag_2, r_min, r_max, result)
@@ -134,6 +136,8 @@ real function W_one_part_imag_2(r)
     common /one_part_imag_values/r_val
     common /one_part_imag_values/t_time_val
 
+		! print *, "W_one_part_imag_2 / r: ", r
+
     r_val = r
 
     call integral_finite(W_one_part_imag_1, theta_min, theta_max, result)
@@ -147,12 +151,15 @@ real function W_one_part_imag_1(theta)
     common /one_part_imag_values/r_val
     common /one_part_imag_values/t_time_val
 
+		! print *, "W_one_part_imag_1 / theta: ", theta, ", r_val: ", r_val, ", t_time_val: ", t_time_val
+
     W_one_part_imag_1 = W_one_part_imag_0(theta, r_val, t_time_val)
 end function W_one_part_imag_1
 
 real function W_one_part_imag_0(theta, r, t_time)
     implicit none
     real :: theta, r, t_time
+		! print *, "W_one_part_imag_0 / theta: ", theta, ", r: ", r, ", t_time: ", t_time
 
     W_one_part_imag_0 = sin(theta) * r * gaussian_squared(theta, r) * sin(c*r*t_time)
 end function W_one_part_imag_0
@@ -281,7 +288,7 @@ real function W_two_parts_imag_0(theta, r, t_time, tau_time)
     implicit none
     real :: theta, r, t_time, tau_time
 
-    W_two_parts_imag_0 =  sin(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau_time)) + sin(t_time-(2*tau_time)))
+    W_two_parts_imag_0 =  sin(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau_time)) + sin(c*r*(t_time-(2*tau_time))))
 end function W_two_parts_imag_0
 
 ! Real helper functions
@@ -479,17 +486,18 @@ end function W_three_parts_real_0
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   g_av    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
+subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_3,phase, &
+	D_plus,D_minus,D_t_minus_tau,p_plus,p_minus,g_av)
     implicit none
     real :: t_time, tau_time, T_temp
     real :: p_plus, p_minus, denominator_plus, denominator_minus
-    real :: D_plus, D_minus, D_t
+    real :: D_plus, D_minus, D_t_minus_tau
     real :: g_plus, g_minus, g_av
 		real :: licznik_plus, licznik_minus, mianownik_plus, mianownik_minus
-    double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
+    double complex :: W_t_minus_tau, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     double complex, parameter :: i = cmplx(0, 1)
 
-    W_t = W_one_part(t_time-tau_time, T_temp)
+    W_t_minus_tau = W_one_part(t_time-tau_time, T_temp)
     W_tau = W_one_part(tau_time, T_temp)
 
     W_0 = W_one_part(t_time-tau_time, T_temp)
@@ -506,66 +514,62 @@ subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_
     denominator_minus = abs(p_minus)
 
     D_plus = abs(0.25*(W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 + W_3))/denominator_plus
+		D_minus = abs(0.25*(-W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 - W_3))/denominator_minus
 
-		print *, "W_0 + W_3:"
-		print *, W_0 + W_3
+    D_t_minus_tau = abs(W_t_minus_tau)
 
-		print *, "abs(W_1):"
-		print *, abs(W_1)
+		if ((D_plus > 1.0) .or. (D_plus < 0.0)) then
+			print *, "Improper value of 'D_plus': ", D_plus
+		endif
 
-		print *, "abs(W_2):"
-		print *, abs(W_2)
+		if ((D_minus > 1.0) .or. (D_minus < 0.0)) then
+			print *, "Improper value of 'D_minus': ", D_minus
+		endif
 
-		print *, "abs(exp(i*E*tau_time/h_bar)*W_tau):"
-		print *, abs(exp(i*E*tau_time/h_bar)*W_tau)
+		if ((D_t_minus_tau > 1.0) .or. (D_t_minus_tau < 0.0)) then
+			print *, "Improper value of 'D_t_minus_tau': ", D_t_minus_tau
+		endif
 
-		print *, "=================="
+		! print *, "W_0:"
+		! print *, W_0
+		!
+		! print *, "W_3:"
+		! print *, W_3
+		!
+		! print *, "W_1:"
+		! print *, W_1
+		!
+		! print *, "W_2:"
+		! print *, W_2
+		!
+		! print *, "(exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2)/2:"
+		! print *, (exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2)/2
+		!
+		! print *, "real(exp(i*E*tau_time/h_bar)*W_tau):"
+		! print *, real(exp(i*E*tau_time/h_bar)*W_tau)
+		!
+		! print *, "=================="
+		!
+		! print *, "ŚRODEK:"
+		! print *, (exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2)/2
+		!
+		! print *, "tau_time:"
+		! print *, tau_time
+		!
+		! print *, "t_time:"
+		! print *, t_time
+		!
+    ! print *, "D_plus:"
+		! print *, D_plus
+		!
+		! print *, "D_minus:"
+		! print *, D_minus
+		!
+		! print *, "D_t_minus_tau:"
+		! print *, D_t_minus_tau
 
-		print *, "ŚRODEK:"
-		print *, (exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2)/2
-
-		print *, "p_plus_real:"
-		print *, real(exp(i*E*tau_time/h_bar)*W_tau)
-
-		licznik_plus = abs(0.25*(W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 + W_3))
-		mianownik_plus = denominator_plus
-
-		print *, "licznik_plus:"
-		print *, licznik_plus
-
-		print *, "mianownik_plus:"
-		print *, mianownik_plus
-
-    D_minus = abs(0.25*(-W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 - W_3))/denominator_minus
-
-		licznik_minus = abs(0.25*(-W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 - W_3))
-		mianownik_minus = denominator_minus
-
-		print *, "licznik_minus:"
-		print *, licznik_minus
-
-		print *, "mianownik_minus:"
-		print *, mianownik_minus
-
-    D_t = abs(W_t)
-
-		print *, "tau_time:"
-		print *, tau_time
-
-		print *, "t_time:"
-		print *, t_time
-
-    print *, "D_plus:"
-		print *, D_plus
-
-		print *, "D_minus:"
-		print *, D_minus
-
-		print *, "D_t:"
-		print *, D_t
-
-    g_plus = (D_plus - D_t)! /(1-D_t)
-    g_minus = (D_minus - D_t)! /(1-D_t)
+    g_plus = (D_plus - D_t_minus_tau) ! /(1-D_t_minus_tau)
+    g_minus = (D_minus - D_t_minus_tau) ! /(1-D_t_minus_tau)
 
     g_av = (p_plus*g_plus) + (p_minus*g_minus)
 end subroutine g_average
