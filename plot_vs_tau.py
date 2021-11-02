@@ -47,7 +47,7 @@ def main():
         plt.grid()
         filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(xs[-1]) + '.pdf'
         plt.savefig(filename)
-        plt.show()
+        # plt.show()
 
 
 if __name__ == '__main__':
