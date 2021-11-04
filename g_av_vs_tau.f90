@@ -25,7 +25,7 @@ program main
       write(*,*)'- tau_time_start,'
       write(*,*)'- t_time,'
       write(*,*)'- T_temperature,'
-      write(*,*)'- number_of_iterations.'
+      write(*,*)'- number_of_iterations (not smaller than 1000).'
       stop
     endif
 
@@ -38,6 +38,11 @@ program main
     read(t_time_string,*) t_time
     read(T_temp_string,*) T_temp
     read(number_of_iterations_string,*) number_of_iterations
+
+    if (number_of_iterations < 1000) then
+      print *, "Too small value of number_of_iterations! Stopping execution."
+      stop
+    endif
 
     write(tau_time_end_string, '(f4.2)' )  tau_time_start + (number_of_iterations*tau_time_step)
     filename = "g_av_vs_tau_T="//T_temp_string//"_"//t_time_string//"_"//tau_time_start_string//"_"//tau_time_end_string//".dat"

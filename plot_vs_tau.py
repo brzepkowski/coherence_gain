@@ -26,7 +26,6 @@ def main():
         print("filename: ", filename)
         input_file = open(filename, "r")
 
-        # input_file_prefix = open("g_av_T=" + T_string + "_" + t_time_string + "_" + tau_time_string  ".dat", "r")
         content = input_file.readlines()
         for line in content:
             if line != "\n":

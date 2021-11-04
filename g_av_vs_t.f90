@@ -1,65 +1,67 @@
 program main
     use coherence_gain
     implicit none
-    real :: tau_time, tau_min_time, tau_max_time ! Taus corresponding to minimal and maximal values of g_av (calculated for t = 20. and starting point of tau = 6.0)
-    real :: t_time, t_time_min, t_time_step, T_temp
+    real :: tau_time
+    real :: t_time, t_time_start, t_time_end, t_time_step
+    real :: T_temp
     real :: p_plus, p_minus
     real :: D_plus, D_minus, D_t
     real :: g_av, period
     double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
-    integer :: iterator, number_of_time_steps, taus_iterator, num_of_different_taus
-    character(40) :: filename
-    character(10) :: tau_time_string
+    integer :: iterator, number_of_iterations
+    character(100) :: filename
+    character(4) :: tau_time_string
+    character(4) :: t_time_start_string, t_time_end_string
     character(4) :: T_temp_string
+    character(100) :: number_of_iterations_string
+    character(3) :: min_or_max_type_string ! It can be either 'MIN' or 'MAX'
 
-    num_of_different_taus = 1
-    number_of_time_steps = 10000
     period = (2 * pi * h_bar) / E
-    print *, "period: ", period
+    t_time_step = 0.00001
 
-    tau_min_time = 6.00502014
-    tau_max_time = 6.00604010
-    t_time_step = 0.0001
-    T_temp = 70.0
-    write(T_temp_string, '(f4.1)' )  T_temp
+    !First, make sure the right number of inputs have been provided
+    if (COMMAND_ARGUMENT_COUNT() .ne. 5) then
+      write(*,*)'Error, 5 command-line arguments required.'
+      write(*,*)'Provide them in the following way:'
+      write(*,*)'- MIN/MAX,'
+      write(*,*)'- tau_time,'
+      write(*,*)'- t_time_start,'
+      write(*,*)'- T_temperature,'
+      write(*,*)'- number_of_iterations (not smaller than 1000).'
+      stop
+    endif
 
-    ! Generate data for minimas of the g_av
-    tau_time = tau_min_time
+    call GET_COMMAND_ARGUMENT(1, min_or_max_type_string)
+    call GET_COMMAND_ARGUMENT(2, tau_time_string)
+    call GET_COMMAND_ARGUMENT(3, t_time_start_string)
+    call GET_COMMAND_ARGUMENT(4, T_temp_string)
+    call GET_COMMAND_ARGUMENT(5, number_of_iterations_string)
 
-    do taus_iterator = 0, num_of_different_taus-1
-        tau_time = tau_time + taus_iterator*500*period
-        t_time_min = tau_time + t_time_step
+    ! convert to REALs
+    read(tau_time_string,*) tau_time
+    read(t_time_start_string,*) t_time_start
+    read(T_temp_string,*) T_temp
+    read(number_of_iterations_string,*) number_of_iterations
 
-        write(tau_time_string, '(f10.8)' )  tau_time
-        filename = "min_g_av_T="//T_temp_string//"_tau="//tau_time_string//".dat"
-        open(1, file=filename, status='replace')
+    if (number_of_iterations < 1000) then
+      print *, "Too small value of number_of_iterations! Stopping execution."
+      stop
+    endif
 
-        do iterator = 0, number_of_time_steps
-            print *, iterator, " / ", number_of_time_steps
-            t_time = t_time_min + t_time_step*iterator
-            call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
-                            W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
-            write(1,*) t_time, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase, D_plus, D_minus, D_t, p_plus, p_minus, g_av
-        end do
+    write(t_time_end_string, '(f4.2)' )  t_time_start + (number_of_iterations*t_time_step)
+    filename = "g_av_vs_t_"//min_or_max_type_string//"_T="//T_temp_string//"_"// &
+      tau_time_string//"_"//t_time_start_string//"_"//t_time_end_string//".dat"
+
+    print *, filename
+    open(1, file=filename, status='replace')
+
+    do iterator = 0, number_of_iterations
+        print *, iterator, " / ", number_of_iterations
+        t_time = t_time_start + t_time_step*iterator
+        call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
+                        W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
+        write(1,*) t_time, g_av
     end do
 
-    ! Generate data for maximas of the g_av
-    tau_time = tau_max_time
 
-    do taus_iterator = 0, num_of_different_taus-1
-        tau_time = tau_time + taus_iterator*500*period
-        t_time_min = tau_time + t_time_step
-
-        write(tau_time_string, '(f10.8)' )  tau_time
-        filename = "max_g_av_T="//T_temp_string//"_tau="//tau_time_string//".dat"
-        open(1, file=filename, status='replace')
-
-        do iterator = 0, number_of_time_steps
-            print *, iterator, " / ", number_of_time_steps
-            t_time = t_time_min + t_time_step*iterator
-            call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
-                            W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
-            write(1,*) t_time, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase, D_plus, D_minus, D_t, p_plus, p_minus, g_av
-        end do
-    end do
 end program main
