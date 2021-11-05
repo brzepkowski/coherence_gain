@@ -10,14 +10,16 @@ program main
     double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     integer :: iterator, number_of_iterations
     character(100) :: filename
-    character(4) :: tau_time_string
-    character(4) :: t_time_start_string, t_time_end_string
+    character(11) :: tau_time_string
+    character(11) :: t_time_start_string, t_time_end_string
     character(4) :: T_temp_string
     character(100) :: number_of_iterations_string
     character(3) :: min_or_max_type_string ! It can be either 'MIN' or 'MAX'
 
     period = (2 * pi * h_bar) / E
     t_time_step = 0.00001
+
+    print *, period
 
     !First, make sure the right number of inputs have been provided
     if (COMMAND_ARGUMENT_COUNT() .ne. 5) then
@@ -44,11 +46,11 @@ program main
     read(number_of_iterations_string,*) number_of_iterations
 
     if (number_of_iterations < 1000) then
-      print *, "Too small value of number_of_iterations! Stopping execution."
+      print *, "Too small number_of_iterations! Stopping execution."
       stop
     endif
 
-    write(t_time_end_string, '(f4.2)' )  t_time_start + (number_of_iterations*t_time_step)
+    write(t_time_end_string, '(f11.9)' )  t_time_start + (number_of_iterations*t_time_step)
     filename = "g_av_vs_t_"//min_or_max_type_string//"_T="//T_temp_string//"_"// &
       tau_time_string//"_"//t_time_start_string//"_"//t_time_end_string//".dat"
 

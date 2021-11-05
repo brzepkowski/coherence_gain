@@ -40,7 +40,7 @@ program main
     read(number_of_iterations_string,*) number_of_iterations
 
     if (number_of_iterations < 1000) then
-      print *, "Too small value of number_of_iterations! Stopping execution."
+      print *, "Too small number_of_iterations! Stopping execution."
       stop
     endif
 
