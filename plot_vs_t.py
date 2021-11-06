@@ -60,7 +60,7 @@ def main():
     plt.grid()
     filename = 'g_av_vs_t_' + min_or_max_type_string + '_T=' + str(T_temp_string) + '.pdf'
     plt.savefig(filename)
-    plt.show()
+    # plt.show()
 
 
 if __name__ == '__main__':
