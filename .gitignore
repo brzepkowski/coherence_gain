@@ -137,3 +137,4 @@ dmypy.json
 
 # Files storing results
 *.dat
+*.txt
