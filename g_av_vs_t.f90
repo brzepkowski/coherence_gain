@@ -10,8 +10,8 @@ program main
     double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     integer :: iterator, number_of_iterations
     character(100) :: filename
-    character(11) :: tau_time_string
-    character(11) :: t_time_start_string, t_time_end_string
+    character(12) :: tau_time_string
+    character(12) :: t_time_start_string, t_time_end_string
     character(4) :: T_temp_string
     character(100) :: number_of_iterations_string
     character(3) :: min_or_max_type_string ! It can be either 'MIN' or 'MAX'

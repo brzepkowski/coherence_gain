@@ -158,13 +158,15 @@ def main():
             # print("taus_min: ", taus_min)
             # print("taus_max: ", taus_max)
 
-            # plt.plot(taus, g_avs, "-", label=r"$g_{av}$")
-            # plt.plot(taus_min, g_avs_min, ".", label=r"$g_{av}^{MIN}$")
-            # plt.plot(taus_max, g_avs_max, ".", label=r"$g_{av}^{MAX}$")
-            # plt.grid()
-            # plt.legend()
+            plt.plot(taus, g_avs, "-", label=r"$g_{av}$")
+            plt.plot(taus_min, g_avs_min, ".", label=r"$g_{av}^{MIN}$")
+            plt.plot(taus_max, g_avs_max, ".", label=r"$g_{av}^{MAX}$")
+            plt.grid()
+            plt.legend()
+            filename_plot = filename.replace(".dat", "_mins_and_maxes.pdf")
+            plt.savefig(filename_plot)
+            plt.clf()
             # plt.show()
-            # sys.exit()
 
             # Save obtained mins and maxes to appropriate files
             filename_mins = filename.replace(".dat", "_mins.txt")
