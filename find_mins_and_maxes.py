@@ -163,8 +163,8 @@ def main():
             plt.plot(taus_max, g_avs_max, ".", label=r"$g_{av}^{MAX}$")
 
             # Mark values used in the generation of g_av vs. t plots
-            plt.plot(taus_min[-1], g_avs_min[-1], 'bx', label=r"$picked\ \tau_{MIN}$")
-            plt.plot(taus_max[-1], g_avs_max[-1], 'rx', label=r"$picked\ \tau_{MAX}$")
+            plt.plot(taus_min[-1], g_avs_min[-1], 'bx', label=r"$picked\ \g_{av}^{MIN}$")
+            plt.plot(taus_max[-1], g_avs_max[-1], 'rx', label=r"$picked\ \g_{av}^{MAX}$")
 
             plt.legend()
             plt.grid()
