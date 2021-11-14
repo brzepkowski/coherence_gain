@@ -60,12 +60,19 @@ def main():
             labels.append(r"$\tau_{MIN}=" + tau_min_string + "$")
             break
 
-    plt.plot(xs[0], g_avs[0], "-", label=labels[0])
+    xs_inset = xs[0][:int(0.0015*len(xs[0]))]
+    g_avs_inset = g_avs[0][:int(0.0015*len(g_avs[0]))]
+
+    fig, ax = plt.subplots()
+    ax.plot(xs[0], g_avs[0], "-", label=labels[0])
+
+    axin1 = ax.inset_axes([0.6, 0.5, 0.35, 0.35])
+    axin1.plot(xs_inset, g_avs_inset, "-")
     # plt.title()
-    plt.ylabel(r'$g_{av}$')
-    plt.xlabel(r'$t - \tau$')
-    plt.legend()
-    plt.grid()
+    ax.set_ylabel(r'$g_{av}$')
+    ax.set_xlabel(r'$t - \tau$')
+    ax.legend()
+    ax.grid()
     filename_plot = 'g_av_vs_t_MIN_T=' + T_temp_string + "_" + tau_min_string + ".pdf"
     plt.savefig(filename_plot)
     plt.clf()
@@ -102,12 +109,19 @@ def main():
             labels.append(r"$\tau_{MAX}=" + tau_max_string + "$")
             break
 
-    plt.plot(xs[1], g_avs[1], "-", label=labels[1])
+    xs_inset = xs[1][:int(0.0015*len(xs[1]))]
+    g_avs_inset = g_avs[1][:int(0.0015*len(g_avs[1]))]
+
+    fig, ax = plt.subplots()
+    ax.plot(xs[1], g_avs[1], "-", label=labels[1])
+
+    axin1 = ax.inset_axes([0.6, 0.5, 0.35, 0.35])
+    axin1.plot(xs_inset, g_avs_inset, "-")
     # plt.title()
-    plt.ylabel(r'$g_{av}$')
-    plt.xlabel(r'$t - \tau$')
-    plt.legend()
-    plt.grid()
+    ax.set_ylabel(r'$g_{av}$')
+    ax.set_xlabel(r'$t - \tau$')
+    ax.legend()
+    ax.grid()
     filename_plot = 'g_av_vs_t_MAX_T=' + T_temp_string + "_" + tau_max_string + ".pdf"
     plt.savefig(filename_plot)
     plt.clf()

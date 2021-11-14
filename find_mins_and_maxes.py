@@ -161,8 +161,14 @@ def main():
             plt.plot(taus, g_avs, "-", label=r"$g_{av}$")
             plt.plot(taus_min, g_avs_min, ".", label=r"$g_{av}^{MIN}$")
             plt.plot(taus_max, g_avs_max, ".", label=r"$g_{av}^{MAX}$")
-            plt.grid()
+
+            # Mark values used in the generation of g_av vs. t plots
+            plt.plot(taus_min[-1], g_avs_min[-1], 'bx', label=r"$picked\ \tau_{MIN}$")
+            plt.plot(taus_max[-1], g_avs_max[-1], 'rx', label=r"$picked\ \tau_{MAX}$")
+
             plt.legend()
+            plt.grid()
+            # Save to file
             filename_plot = filename.replace(".dat", "_mins_and_maxes.pdf")
             plt.savefig(filename_plot)
             plt.clf()
