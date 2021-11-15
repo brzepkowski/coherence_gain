@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 import sys, os, glob
 
 def main():
@@ -68,6 +69,13 @@ def main():
 
     axin1 = ax.inset_axes([0.6, 0.5, 0.35, 0.35])
     axin1.plot(xs_inset, g_avs_inset, "-")
+
+    # Plot line corresponding to t = 2 * tau
+    ax.vlines(x = tau_min, ymin = np.min(g_avs[0]), ymax = np.max(g_avs[0]),
+           colors = 'purple',
+           linestyles = 'dashed',
+           label = r'$t = 2\tau_{MIN}$')
+
     # plt.title()
     ax.set_ylabel(r'$g_{av}$')
     ax.set_xlabel(r'$t - \tau$')
@@ -117,6 +125,13 @@ def main():
 
     axin1 = ax.inset_axes([0.6, 0.5, 0.35, 0.35])
     axin1.plot(xs_inset, g_avs_inset, "-")
+
+    # Plot line corresponding to t = 2 * tau
+    ax.vlines(x = tau_max, ymin = np.min(g_avs[1]), ymax = np.max(g_avs[1]),
+           colors = 'purple',
+           linestyles = 'dashed',
+           label = r'$t = 2\tau_{MAX}$')
+
     # plt.title()
     ax.set_ylabel(r'$g_{av}$')
     ax.set_xlabel(r'$t - \tau$')
