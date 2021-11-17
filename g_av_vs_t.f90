@@ -5,7 +5,7 @@ program main
     real :: t_time, t_time_start, t_time_end, t_time_step
     real :: T_temp
     real :: p_plus, p_minus
-    real :: D_plus, D_minus, D_t
+    real :: D_plus, D_minus, D_t_minus_tau
     real :: g_av, period
     double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     integer :: iterator, number_of_iterations
@@ -61,8 +61,10 @@ program main
         print *, iterator, " / ", number_of_iterations
         t_time = t_time_start + t_time_step*iterator
         call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased, &
-                        W_3,phase,D_plus,D_minus,D_t,p_plus,p_minus,g_av)
-        write(1,*) t_time, g_av
+                        W_3,phase,D_plus,D_minus,D_t_minus_tau,p_plus,p_minus,g_av)
+
+        pure_phase = exp(i*E*tau_time/h_bar)
+        write(1,*) t_time, g_av, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, D_plus, D_minus, D_t_minus_tau, p_plus, p_minus, pure_phase
     end do
 
 
