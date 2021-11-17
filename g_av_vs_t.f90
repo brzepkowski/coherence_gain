@@ -8,6 +8,8 @@ program main
     real :: D_plus, D_minus, D_t_minus_tau
     real :: g_av, period
     double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
+    double complex :: pure_phase
+    double complex, parameter :: i = cmplx(0, 1)
     integer :: iterator, number_of_iterations
     character(100) :: filename
     character(12) :: tau_time_string
@@ -64,7 +66,8 @@ program main
                         W_3,phase,D_plus,D_minus,D_t_minus_tau,p_plus,p_minus,g_av)
 
         pure_phase = exp(i*E*tau_time/h_bar)
-        write(1,*) t_time, g_av, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, D_plus, D_minus, D_t_minus_tau, p_plus, p_minus, pure_phase
+        write(1,*) t_time, g_av, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, &
+            D_plus, D_minus, D_t_minus_tau, p_plus, p_minus, pure_phase
     end do
 
 
