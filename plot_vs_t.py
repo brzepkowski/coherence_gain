@@ -2,6 +2,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import sys, os, glob
 
+HBAR = 0.6582119569
+
 def main():
     if len(sys.argv) != 5:
         print("Wrong number of parameters! Please provide them in the following way:")
@@ -140,6 +142,10 @@ def main():
         g_avs_inset = g_avs[0][:int(0.0015*len(g_avs[0]))]
 
         fig, ax = plt.subplots()
+
+        exponent_min = np.exp(1j*1000*tau_min / HBAR)
+        plt.title(r"$ e^{iE\tau/\hbar} = " + str(exponent_min) + " $")
+
         ax.plot(xs[0], g_avs[0], "-", label=labels[0])
 
         axin1 = ax.inset_axes([0.6, 0.5, 0.35, 0.35])
@@ -225,6 +231,10 @@ def main():
     g_avs_inset = g_avs[1][:int(0.0015*len(g_avs[1]))]
 
     fig, ax = plt.subplots()
+
+    exponent_max = np.exp(1j*1000*tau_max / HBAR)
+    plt.title(r"$ e^{iE\tau/\hbar} = " + str(exponent_max) + " $")
+
     ax.plot(xs[1], g_avs[1], "-", label=labels[1])
 
     axin1 = ax.inset_axes([0.6, 0.5, 0.35, 0.35])
