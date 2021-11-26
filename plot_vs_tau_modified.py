@@ -271,13 +271,10 @@ def main():
                 axs[3][1].legend()
                 axs[3][1].set_xlabel(r'$\tau$')
 
+                filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '_modified.pdf'
+                plt.savefig(filename)
 
-                # filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '.pdf'
-                # plt.savefig(filename)
-
-
-
-                plt.show()
+                # plt.show()
                 plt.clf()
                 sys.exit()
             else:
@@ -285,7 +282,7 @@ def main():
                 plt.ylabel(r'$g_{av}$')
                 plt.xlabel(r'$\tau$')
                 plt.grid()
-                filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '.pdf'
+                filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '_modified.pdf'
                 plt.savefig(filename)
                 # plt.show()
                 plt.clf()
