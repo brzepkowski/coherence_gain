@@ -59,7 +59,7 @@ program main
             D_plus,D_minus,D_t_minus_tau,p_plus,p_minus,g_av)
 
         pure_phase = exp(i*E*tau_time/h_bar)
-        write(1,*) tau_time, g_av, D_plus, D_minus, p_plus, p_minus, pure_phase
+        write(1,*) tau_time, g_av, D_plus, D_minus, D_t_minus_tau, p_plus, p_minus, pure_phase
     end do
 
 end program main

@@ -19,8 +19,9 @@ subroutine integral_finite(f, a, b, result)
     implicit none
     real :: a, abserr, b, epsabs, epsrel, f, res, work, result
     integer :: ier, iwork, key, lenw, limit, neval, last
-    parameter(epsabs=0.1, epsrel=0.1)
-    parameter(key=2, limit=10000)
+		! parameter(epsabs=0.00001, epsrel=0.00001) ! These parameters give quite smooth data, but not perfectly smooth.
+		parameter(epsabs=0.001, epsrel=0.001)
+		parameter(key=2, limit=10000)
     parameter(lenw=4*limit+1)
     dimension :: iwork(limit), work(lenw)
     external f
@@ -35,8 +36,8 @@ subroutine integral_infinite(f, bound, inf, result)
 	implicit none
 	real :: abserr, epsabs, epsrel, f, res, work, result, bound
 	integer :: ier, iwork, key, lenw, limit, neval, inf, last
-	! parameter(epsabs=0.000001, epsrel=0.000001)
-  parameter(epsabs=0.00001, epsrel=0.00001)
+	! parameter(epsabs=0.00001, epsrel=0.00001) ! These parameters give quite smooth data, but not perfectly smooth.
+	parameter(epsabs=0.001, epsrel=0.001)
 	parameter(key=2, limit=10000)
 	parameter(lenw=4*limit+1)
 	dimension :: iwork(limit), work(lenw)

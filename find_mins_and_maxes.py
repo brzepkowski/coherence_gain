@@ -158,6 +158,24 @@ def main():
             # print("taus_min: ", taus_min)
             # print("taus_max: ", taus_max)
 
+            ####################################################################
+            # Find global minimum
+            ####################################################################
+
+            global_min_g_av = min(g_avs_min)
+            global_min_g_av_index = g_avs_min.index(global_min_g_av)
+            print("g_av global minimum: ", global_min_g_av, " (",  global_min_g_av_index, ")")
+            print("Tau of g_av's global minimum: ", taus_min[global_min_g_av_index])
+            for i in range(len(taus_max)):
+                tau = taus_max[i]
+                if tau > taus_min[global_min_g_av_index]:
+                    break
+            print("Tau of g_av's local maximum close to tau of global minimum: ", taus_max[i])
+
+            ####################################################################
+            # Save data to files
+            ####################################################################
+
             plt.plot(taus, g_avs, "-", label=r"$g_{av}$")
             plt.plot(taus_min, g_avs_min, ".", label=r"$g_{av}^{MIN}$")
             plt.plot(taus_max, g_avs_max, ".", label=r"$g_{av}^{MAX}$")
@@ -170,10 +188,11 @@ def main():
             plt.grid()
             # Save to file
             filename_plot = filename.replace(".dat", "_mins_and_maxes.pdf")
-            plt.savefig(filename_plot)
+            # plt.savefig(filename_plot)
             plt.clf()
             # plt.show()
 
+            """
             # Save obtained mins and maxes to appropriate files
             filename_mins = filename.replace(".dat", "_mins.txt")
             output_file = open(filename_mins, "w")
@@ -186,6 +205,8 @@ def main():
             for tau in taus_max:
                 output_file.write(str(tau) + "\n")
             output_file.close()
+            """
+            # sys.exit()
 
 if __name__ == '__main__':
     main()

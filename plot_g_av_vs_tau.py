@@ -16,7 +16,7 @@ def main():
     extended_mode = sys.argv[4]
 
     if extended_mode != "0" and extended_mode != "1":
-        print("Wrong type of mode! PLease provide '0' or '1'.")
+        print("Wrong type of mode! Please provide '0' or '1'.")
         sys.exit()
     else:
         if extended_mode == "0":
@@ -37,6 +37,7 @@ def main():
             taus = []
             D_pluses = []
             D_minuses = []
+            D_t_minus_taus = []
             p_pluses = []
             p_minuses = []
             pure_phases_real = []
@@ -53,18 +54,28 @@ def main():
                     g_av = float(splitted_line[1])
                     D_plus = float(splitted_line[2])
                     D_minus = float(splitted_line[3])
-                    p_plus = float(splitted_line[4])
-                    p_minus = float(splitted_line[5])
-                    pure_phase = splitted_line[6].replace('(', '').replace(')', '').split(',')
+                    D_t_minus_tau = float(splitted_line[4])
+                    p_plus = float(splitted_line[5])
+                    p_minus = float(splitted_line[6])
+                    pure_phase = splitted_line[7].replace('(', '').replace(')', '').split(',')
                     pure_phase = (float(pure_phase[0]), float(pure_phase[1]))
                     pure_phase = complex(pure_phase[0], pure_phase[1])
                     # print("pure_phase: ", pure_phase)
+
+                    # Normalize g_av
+                    if abs(D_t_minus_tau - 1) > 1e-5:
+                        g_av /= (1 - D_t_minus_tau)
+                        g_av *= 100
+                        # pass
+                    else:
+                        break
 
                     # print("splitted_line: ", splitted_line)
                     taus.append(tau)
                     g_avs.append(g_av)
                     D_pluses.append(D_plus)
                     D_minuses.append(D_minus)
+                    D_t_minus_taus.append(D_t_minus_tau)
                     p_pluses.append(p_plus)
                     p_minuses.append(p_minus)
                     pure_phases_real.append(pure_phase.real)
@@ -80,12 +91,13 @@ def main():
                 axs[1].plot(taus, p_minuses, "-", label=r'$p_-$')
                 axs[2].plot(taus, D_pluses, "-", label=r'$D_+$')
                 axs[2].plot(taus, D_minuses, "-", label=r'$D_-$')
+                axs[2].plot(taus, D_t_minus_taus, "-", label=r'$D$')
                 axs[3].plot(taus, pure_phases_real, "-", label=r'$Re(exp(iE\tau)/\hbar))$')
                 axs[3].plot(taus, pure_phases_imag, "-", label=r'$Im(exp(iE\tau)/\hbar))$')
 
                 # plt.title(r'$\tau\ =\ ' + str(tau) + '$')
                 axs[0].grid()
-                axs[0].set_ylabel(r'$g_{av}$')
+                axs[0].set_ylabel(r'$g_{av}\ [\%]$')
                 axs[1].grid()
                 axs[1].legend()
                 axs[1].set_ylabel(r'$probability$')
@@ -94,19 +106,20 @@ def main():
                 axs[2].set_ylabel(r'$D$')
                 axs[3].grid()
                 axs[3].legend()
-                axs[3].set_xlabel(r'$\tau$')
+                axs[3].set_xlabel(r'$\tau\ [ps]$')
                 filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '.pdf'
-                plt.savefig(filename)
-                # plt.show()
+                # plt.savefig(filename)
+                plt.show()
                 plt.clf()
             else:
                 plt.plot(taus, g_avs, "-")
-                plt.ylabel(r'$g_{av}$')
-                plt.xlabel(r'$\tau$')
+                plt.title("T = " + T_temp_string + " K")
+                plt.ylabel(r'$g_{av}\ [\%]$')
+                plt.xlabel(r'$\tau\ [ps]$')
                 plt.grid()
                 filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '.pdf'
-                plt.savefig(filename)
-                # plt.show()
+                # plt.savefig(filename)
+                plt.show()
                 plt.clf()
 
 
