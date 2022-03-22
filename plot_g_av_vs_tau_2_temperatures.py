@@ -69,6 +69,8 @@ def main():
 
     # fig = plt.figure(figsize=[10, 12])
     plt.rc('font', size=25)
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['font.family'] = 'STIXGeneral'
 
     # plt.subplot(2, 1, 1)
     # plt.plot(all_taus[0], all_g_avs[0], '-', label=all_labels[0])

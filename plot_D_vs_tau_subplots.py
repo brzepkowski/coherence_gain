@@ -129,6 +129,8 @@ def main():
 
     fig = plt.figure(figsize=[12, 6])
     plt.rc('font', size=25)
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['font.family'] = 'STIXGeneral'
 
     plt.subplot(1, 2, 1)
     # plt.plot(all_taus[0], all_D_pluses[0], '-')

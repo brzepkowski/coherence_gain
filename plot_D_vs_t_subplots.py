@@ -166,6 +166,8 @@ def main():
 
     fig = plt.figure(figsize=[12, 6])
     plt.rc('font', size=25)
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['font.family'] = 'STIXGeneral'
 
     ############################################################################
     # Plot Ds for both tau_min and tau_max
