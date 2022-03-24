@@ -104,7 +104,9 @@ def main():
                     all_labels.append("T = " + T_temp_string + " K, tau = " + tau_time_string)
 
     fig = plt.figure(figsize=[10, 12])
-    plt.rc('font', size=25)
+    font_size = 25 # Changes the size of all fonts in the plot
+    tick_size = 20 # Changes the size of all labels on axes in the plot
+    plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
 
@@ -126,15 +128,16 @@ def main():
     plt.plot(max_taus_g_av_1, max_g_avs_1, '--', color='#ff7f0e')
     plt.plot(min_taus_g_av_1, min_g_avs_1, '--', color='#ff7f0e')
 
-    # plt.annotate('34 K', xy =(0.85, 5.75))
-    # plt.annotate('70 K', xy =(1.45, 4.2))
-    plt.annotate('34 K', xy =(1.15, 6.55))
-    plt.annotate('70 K', xy =(1.95, 5.85))
+    # plt.annotate(r'$34\ K$', xy =(0.85, 5.75))
+    # plt.annotate(r'$70\ K$', xy =(1.45, 4.2))
+    plt.annotate(r'$34\ K$', xy =(1.15, 6.55))
+    plt.annotate(r'$70\ K$', xy =(1.95, 5.85))
     # plt.hlines(0, 0.0, 0.2, color='black', linestyle='dashed')
-    plt.ylabel(r'$g_{av}^\prime\ [\%]$')
+    plt.ylabel(r'$g_{av}^\prime\ [\%]$', fontsize=font_size)
     plt.xlim([min(all_taus[0]), max(all_taus[0])])
     plt.locator_params(axis='x', nbins=5)
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
+    plt.tick_params(axis='y', labelsize=tick_size)
     # plt.ylim([-0.1, 0.1])
     plt.locator_params(axis='y', nbins=5)
 
@@ -154,13 +157,14 @@ def main():
     plt.subplot(2, 1, 2)
     plt.plot(all_taus[2], all_g_avs[2], '-', label=all_labels[2])
     plt.plot(all_taus[3], all_g_avs[3], '--', label=all_labels[3])
-    plt.annotate('34 K', xy =(4.007, 7))
-    plt.annotate('70 K', xy =(4.0078, 1))
-    plt.ylabel(r'$g_{av}^\prime\ [\%]$')
-    plt.xlabel(r'$\tau\ [ps]$')
+    plt.annotate(r'$34\ K$', xy =(4.007, 7))
+    plt.annotate(r'$70\ K$', xy =(4.0078, 1))
+    plt.ylabel(r'$g_{av}^\prime\ [\%]$', fontsize=font_size)
+    plt.xlabel(r'$\tau\ [ps]$', fontsize=font_size)
     plt.xlim([min(all_taus[2]), max(all_taus[2])])
     plt.locator_params(axis='x', nbins=5)
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
+    plt.tick_params(axis='y', labelsize=tick_size)
     plt.ylim([0, 8])
     plt.locator_params(axis='y', nbins=5)
 

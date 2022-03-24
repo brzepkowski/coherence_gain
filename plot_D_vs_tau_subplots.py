@@ -128,7 +128,9 @@ def main():
                     # all_labels.append("T = " + T_temp_string + " K, tau = " + tau_time_string)
 
     fig = plt.figure(figsize=[12, 6])
-    plt.rc('font', size=25)
+    font_size = 25 # Changes the size of all fonts in the plot
+    tick_size = 25 # Changes the size of all labels on axes in the plot
+    plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
 
@@ -168,13 +170,14 @@ def main():
     plt.plot(all_taus[1], all_D_t_minus_taus[1], ':')
 
 
-    plt.annotate('34 K', xy =(all_taus[0][math.floor(0.75*len(all_taus[0]))], 0.7))
-    plt.annotate('70 K', xy =(all_taus[0][math.floor(0.75*len(all_taus[0]))], 0.2))
-    plt.xlabel(r'$\tau\ [ps]$')
-    plt.ylabel(r'$D$')
+    plt.annotate(r'$34\ K$', xy =(all_taus[0][math.floor(0.75*len(all_taus[0]))], 0.7))
+    plt.annotate(r'$70\ K$', xy =(all_taus[0][math.floor(0.75*len(all_taus[0]))], 0.2))
+    plt.xlabel(r'$\tau\ [ps]$', fontsize=font_size)
+    plt.ylabel(r'$D$', fontsize=font_size)
     plt.xlim([min(all_taus[0]), max(all_taus[0])])
     # plt.locator_params(axis='x', nbins=5)
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
+    plt.tick_params(axis='y', labelsize=tick_size)
     plt.ylim([0, 1])
     # plt.locator_params(axis='y', nbins=5)
 
@@ -188,12 +191,12 @@ def main():
     plt.plot(all_taus[3], all_D_minuses[3], '--')
     plt.plot(all_taus[3], all_D_t_minus_taus[3], ':')
 
-    plt.annotate('34 K', xy =(all_taus[2][math.floor(0.75*len(all_taus[2]))], 0.7))
-    plt.annotate('70 K', xy =(all_taus[2][math.floor(0.75*len(all_taus[2]))], 0.2))
-    plt.xlabel(r'$\tau\ [ps]$')
+    plt.annotate(r'$34\ K$', xy =(all_taus[2][math.floor(0.75*len(all_taus[2]))], 0.7))
+    plt.annotate(r'$70\ K$', xy =(all_taus[2][math.floor(0.75*len(all_taus[2]))], 0.2))
+    plt.xlabel(r'$\tau\ [ps]$', fontsize=font_size)
     plt.xlim([min(all_taus[2]), max(all_taus[2])])
     # plt.locator_params(axis='x', nbins=5)
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
     plt.ylim([0, 1])
     plt.yticks([])
     # plt.locator_params(axis='y', nbins=5)
