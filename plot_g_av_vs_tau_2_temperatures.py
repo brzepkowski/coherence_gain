@@ -68,7 +68,9 @@ def main():
                 all_labels.append("T = " + T_temp_string + " K, tau = " + tau_time_string)
 
     # fig = plt.figure(figsize=[10, 12])
-    plt.rc('font', size=25)
+    font_size = 25 # Changes the size of all fonts in the plot
+    tick_size = 20 # Changes the size of all labels on axes in the plot
+    plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
 
@@ -88,14 +90,15 @@ def main():
     plt.plot(min_taus_g_av, min_g_avs, '--', color='C1')
 
 
-    plt.annotate('34 K', xy =(0.23, 0.0044))
-    plt.annotate('70 K', xy =(0.33, 0.0085))
+    plt.annotate(r'$34\ K$', xy =(0.23, 0.0044))
+    plt.annotate(r'$70\ K$', xy =(0.33, 0.0085))
     # plt.hlines(0, 0.0, 0.2, color='black', linestyle='dashed')
-    plt.ylabel(r'$g_{av}$')
-    plt.xlabel(r'$\tau\ [ps]$')
+    plt.ylabel(r'$g_{av}$', fontsize=font_size)
+    plt.xlabel(r'$\tau\ [ps]$', fontsize=font_size)
     plt.xlim([min(all_taus[0]), max(all_taus[0])])
     plt.locator_params(axis='x', nbins=5)
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
+    plt.tick_params(axis='y', labelsize=tick_size)
     # plt.ylim([-0.1, 0.1])
     plt.locator_params(axis='y', nbins=5)
 

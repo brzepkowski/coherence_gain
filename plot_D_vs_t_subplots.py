@@ -165,7 +165,9 @@ def main():
         labels.append(r"$\tau_{MAX}=" + tau_max_string + "\ T=" + T_temp_string)
 
     fig = plt.figure(figsize=[12, 6])
-    plt.rc('font', size=25)
+    font_size = 25 # Changes the size of all fonts in the plot
+    tick_size = 25 # Changes the size of all labels on axes in the plot
+    plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
 
@@ -186,14 +188,15 @@ def main():
     # plt.plot(xs[1], Ds_minus[1], "--", label=labels[1] + ", D_-$", color='C1') # This line overlaps with the D_+ plotted one line above
     # plt.plot(xs[1], Ds_t_minus_tau[1], ":", label=labels[1] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
 
-    # plt.annotate('34 K', xy =(3, 0.9))
-    plt.annotate('34 K', xy =(6, 0.9))
+    # plt.annotate(r'$34\ K$', xy =(3, 0.9))
+    plt.annotate(r'$34\ K$', xy =(6, 0.9))
     # plt.title()
-    plt.ylabel(r'$D$')
+    plt.ylabel(r'$D$', fontsize=font_size)
     plt.ylim([0, 1])
-    plt.xlabel(r'$t - \tau\ [ps]$')
+    plt.xlabel(r'$t - \tau\ [ps]$', fontsize=font_size)
     plt.xlim([min(xs[0]), max(xs[0])])
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
+    plt.tick_params(axis='y', labelsize=tick_size)
     # plt.locator_params(axis='x', nbins=4)
     plt.locator_params(axis='x', nbins=8)
     # plt.legend()
@@ -211,15 +214,15 @@ def main():
     plt.plot(xs[3], Ds_plus[3], "-", label=labels[3] + ", D_+$", color='C1')
     # plt.plot(xs[3], Ds_minus[3], "--", label=labels[3] + ", D_-$", color='C1') # This line overlaps with the D_+ plotted one line above
     # plt.plot(xs[3], Ds_t_minus_tau[3], ":", label=labels[3] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
-    # plt.annotate('70 K', xy =(3, 0.9))
-    plt.annotate('70 K', xy =(6, 0.9))
+    # plt.annotate(r'$70\ K$', xy =(3, 0.9))
+    plt.annotate(r'$70\ K$', xy =(6, 0.9))
     # plt.title()
     # plt.ylabel(r'$D$')
     plt.ylim([0, 1])
     plt.yticks([])
-    plt.xlabel(r'$t - \tau\ [ps]$')
+    plt.xlabel(r'$t - \tau\ [ps]$', fontsize=font_size)
     plt.xlim([min(xs[2]), max(xs[2])])
-    plt.tick_params(axis='x', pad=15)
+    plt.tick_params(axis='x', pad=15, labelsize=tick_size)
     # plt.locator_params(axis='x', nbins=4)
     plt.locator_params(axis='x', nbins=8)
     # plt.legend()
