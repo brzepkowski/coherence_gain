@@ -17,12 +17,13 @@ module coherence_gain_finite_phonons
 	integer :: j ! Iterator over the list of momenta
 	real :: k ! A single momenta, which will be picked from the list
 	real :: alpha ! A multiplier needed to enhance the effect for a finite number of phonons
-  ! real, dimension(19) :: ks = &! List of momenta
+  real, dimension(19) :: ks = &! List of momenta
+	 (/ 0.1282, 0.2564, 0.3846, 0.5128, 0.641, 0.7692, 0.8974, 1.0256, 1.1538, &
+	 1.282, 1.4102, 1.5384, 1.6666, 1.7948, 1.923, 2.0512, 2.1794, 2.3076, &
+	 2.4358 /)
+	! real, dimension(15) :: ks = &! List of momenta
 	!  (/ 0.1282, 0.2564, 0.3846, 0.5128, 0.641, 0.7692, 0.8974, 1.0256, 1.1538, &
-	!  1.282, 1.4102, 1.5384, 1.6666, 1.7948, 1.923, 2.0512, 2.1794, 2.3076, &
-	!  2.4358 /)
-	real, dimension(1) :: ks = &! List of momenta
-	 (/ 0.2564 /)
+ 	!  1.282, 1.4102, 1.5384, 1.6666, 1.7948, 1.923 /)
 
 contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
