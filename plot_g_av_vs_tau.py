@@ -37,7 +37,7 @@ def main():
             taus = []
             D_pluses = []
             D_minuses = []
-            D_t_minus_taus = []
+            D_ts = []
             p_pluses = []
             p_minuses = []
             pure_phases_real = []
@@ -54,7 +54,7 @@ def main():
                     g_av = float(splitted_line[1])
                     D_plus = float(splitted_line[2])
                     D_minus = float(splitted_line[3])
-                    D_t_minus_tau = float(splitted_line[4])
+                    D_t = float(splitted_line[4])
                     p_plus = float(splitted_line[5])
                     p_minus = float(splitted_line[6])
                     pure_phase = splitted_line[7].replace('(', '').replace(')', '').split(',')
@@ -63,10 +63,9 @@ def main():
                     # print("pure_phase: ", pure_phase)
 
                     # Normalize g_av
-                    if abs(D_t_minus_tau - 1) > 1e-5:
-                        g_av /= (1 - D_t_minus_tau)
+                    if abs(D_t - 1) > 1e-5:
+                        g_av /= (1 - D_t)
                         g_av *= 100
-                        # pass
                     else:
                         break
 
@@ -75,7 +74,7 @@ def main():
                     g_avs.append(g_av)
                     D_pluses.append(D_plus)
                     D_minuses.append(D_minus)
-                    D_t_minus_taus.append(D_t_minus_tau)
+                    D_ts.append(D_t)
                     p_pluses.append(p_plus)
                     p_minuses.append(p_minus)
                     pure_phases_real.append(pure_phase.real)
@@ -91,13 +90,13 @@ def main():
                 axs[1].plot(taus, p_minuses, "-", label=r'$p_-$')
                 axs[2].plot(taus, D_pluses, "-", label=r'$D_+$')
                 axs[2].plot(taus, D_minuses, "-", label=r'$D_-$')
-                axs[2].plot(taus, D_t_minus_taus, "-", label=r'$D$')
+                axs[2].plot(taus, D_ts, "-", label=r'$D$')
                 axs[3].plot(taus, pure_phases_real, "-", label=r'$Re(exp(iE\tau)/\hbar))$')
                 axs[3].plot(taus, pure_phases_imag, "-", label=r'$Im(exp(iE\tau)/\hbar))$')
 
                 # plt.title(r'$\tau\ =\ ' + str(tau) + '$')
                 axs[0].grid()
-                axs[0].set_ylabel(r'$g_{av}\ [\%]$')
+                axs[0].set_ylabel(r'$g_{av}^\prime\ [\%]$')
                 axs[1].grid()
                 axs[1].legend()
                 axs[1].set_ylabel(r'$probability$')
@@ -114,7 +113,7 @@ def main():
             else:
                 plt.plot(taus, g_avs, "-")
                 plt.title("T = " + T_temp_string + " K")
-                plt.ylabel(r'$g_{av}\ [\%]$')
+                plt.ylabel(r'$g_{av}^\prime\ [\%]$')
                 plt.xlabel(r'$\tau\ [ps]$')
                 plt.grid()
                 filename = 'g_av_vs_tau_T=' + str(T_temp_string) + "_" + t_time_string + "_" + tau_time_string + "_" + "{:.2f}".format(taus[-1]) + '.pdf'

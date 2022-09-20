@@ -56,7 +56,7 @@ def main():
     all_taus = []
     all_D_pluses = []
     all_D_minuses = []
-    all_D_t_minus_taus = []
+    all_D_ts = []
     all_labels = []
 
     for tau_time_string in [tau_time_0_string, tau_time_1_string]:
@@ -70,7 +70,7 @@ def main():
                     taus = []
                     D_pluses = []
                     D_minuses = []
-                    D_t_minus_taus = []
+                    D_ts = []
                     p_pluses = []
                     p_minuses = []
                     pure_phases_real = []
@@ -87,7 +87,7 @@ def main():
                             g_av = float(splitted_line[1])
                             D_plus = float(splitted_line[2])
                             D_minus = float(splitted_line[3])
-                            D_t_minus_tau = float(splitted_line[4])
+                            D_t = float(splitted_line[4])
                             p_plus = float(splitted_line[5])
                             p_minus = float(splitted_line[6])
                             pure_phase = splitted_line[7].replace('(', '').replace(')', '').split(',')
@@ -96,15 +96,15 @@ def main():
                             # print("pure_phase: ", pure_phase)
 
                             # Normalize g_av
-                            g_av /= (1 - D_t_minus_tau)
+                            g_av /= (1 - D_t)
                             g_av *= 100
 
-                            if len(D_t_minus_taus) == 0 or (not math.isnan(D_plus) and not math.isnan(D_minus) and abs(D_t_minus_tau - D_t_minus_taus[-1]) < 1e-3):
+                            if len(D_ts) == 0 or (not math.isnan(D_plus) and not math.isnan(D_minus) and abs(D_t - D_ts[-1]) < 1e-3):
                                 taus.append(tau)
                                 g_avs.append(g_av)
                                 D_pluses.append(D_plus)
                                 D_minuses.append(D_minus)
-                                D_t_minus_taus.append(D_t_minus_tau)
+                                D_ts.append(D_t)
                                 p_pluses.append(p_plus)
                                 p_minuses.append(p_minus)
                                 pure_phases_real.append(pure_phase.real)
@@ -119,12 +119,12 @@ def main():
                         taus = taus[:-1]
                         D_pluses = D_pluses[:-1]
                         D_minuses = D_minuses[:-1]
-                        D_t_minus_taus = D_t_minus_taus[:-1]
+                        D_ts = D_ts[:-1]
 
                     all_taus.append(taus)
                     all_D_pluses.append(D_pluses)
                     all_D_minuses.append(D_minuses)
-                    all_D_t_minus_taus.append(D_t_minus_taus)
+                    all_D_ts.append(D_ts)
                     # all_labels.append("T = " + T_temp_string + " K, tau = " + tau_time_string)
 
     fig = plt.figure(figsize=[12, 6])
@@ -135,14 +135,17 @@ def main():
     plt.rcParams['font.family'] = 'STIXGeneral'
 
     plt.subplot(1, 2, 1)
-    # plt.plot(all_taus[0], all_D_pluses[0], '-')
-    # plt.plot(all_taus[0], all_D_minuses[0], '--')
-    # plt.plot(all_taus[1], all_D_pluses[1], '-')
-    # plt.plot(all_taus[1], all_D_minuses[1], '--')
+    plt.plot(all_taus[0], all_D_pluses[0], '-', color='black')
+    plt.plot(all_taus[0], all_D_minuses[0], '--', color='black')
+    plt.plot(all_taus[1], all_D_pluses[1], '-', color='black')
+    plt.plot(all_taus[1], all_D_minuses[1], '--', color='black')
 
     # Extract envelopes
-    min_taus_D_plus_raw, min_D_plus_raw, max_taus_D_plus_raw, max_D_plus_raw = envelopes(all_taus[0], all_D_pluses[0], diff=0.01)
-    min_taus_D_minus_raw, min_D_minus_raw, max_taus_D_minus_raw, max_D_minus_raw = envelopes(all_taus[0], all_D_minuses[0], diff=0.01)
+    min_taus_D_plus_raw, min_D_plus_raw, _, _ = envelopes(all_taus[0], all_D_pluses[0], epsilon_min=1e-8, epsilon_max=1e-5, diff=0.005)
+    _, _, max_taus_D_plus_raw, max_D_plus_raw = envelopes(all_taus[0], all_D_pluses[0], diff=0.1)
+
+    min_taus_D_minus_raw, min_D_minus_raw, _, _ = envelopes(all_taus[0], all_D_minuses[0], epsilon_min=1e-8, epsilon_max=1e-5, diff=0.005)
+    _, _, max_taus_D_minus_raw, max_D_minus_raw = envelopes(all_taus[0], all_D_minuses[0], diff=0.1)
 
     # Smooth the data to get rid of the 'blops'
     min_taus_D_plus, min_D_plus, max_taus_D_plus, max_D_plus, min_taus_D_minus, min_D_minus, max_taus_D_minus, max_D_minus = smooth_data(min_taus_D_plus_raw, min_D_plus_raw, max_taus_D_plus_raw, max_D_plus_raw, min_taus_D_minus_raw, min_D_minus_raw, max_taus_D_minus_raw, max_D_minus_raw)
@@ -150,14 +153,14 @@ def main():
     # Combine envelopes obtained for D_pluses and D_minuses
     max_taus_D, max_Ds = combine_two_envelopes(max_taus_D_plus, max_D_plus, max_taus_D_minus, max_D_minus)
     min_taus_D, min_Ds = combine_two_envelopes(min_taus_D_plus, min_D_plus, min_taus_D_minus, min_D_minus)
-    plt.plot(max_taus_D, max_Ds, '-')
-    plt.plot(min_taus_D, min_Ds, '--')
-    plt.plot(all_taus[0], all_D_t_minus_taus[0], ':')
+    plt.plot(max_taus_D, max_Ds, '-', color="tab:blue")
+    plt.plot(min_taus_D, min_Ds, '--', color="tab:orange")
+    plt.plot(all_taus[0], all_D_ts[0], ':', color="tab:green")
     #---------------------------------------------------------------------------
 
     # Extract envelopes
-    min_taus_D_plus_raw, min_D_plus_raw, max_taus_D_plus_raw, max_D_plus_raw = envelopes(all_taus[1], all_D_pluses[1], diff=0.01)
-    min_taus_D_minus_raw, min_D_minus_raw, max_taus_D_minus_raw, max_D_minus_raw = envelopes(all_taus[1], all_D_minuses[1], diff=0.01)
+    min_taus_D_plus_raw, min_D_plus_raw, max_taus_D_plus_raw, max_D_plus_raw = envelopes(all_taus[1], all_D_pluses[1], diff=0.1)
+    min_taus_D_minus_raw, min_D_minus_raw, max_taus_D_minus_raw, max_D_minus_raw = envelopes(all_taus[1], all_D_minuses[1], diff=0.1)
 
     # Smooth the data to get rid of the 'blops'
     min_taus_D_plus, min_D_plus, max_taus_D_plus, max_D_plus, min_taus_D_minus, min_D_minus, max_taus_D_minus, max_D_minus = smooth_data(min_taus_D_plus_raw, min_D_plus_raw, max_taus_D_plus_raw, max_D_plus_raw, min_taus_D_minus_raw, min_D_minus_raw, max_taus_D_minus_raw, max_D_minus_raw)
@@ -165,9 +168,9 @@ def main():
     # Combine envelopes obtained for D_pluses and D_minuses
     max_taus_D, max_Ds = combine_two_envelopes(max_taus_D_plus, max_D_plus, max_taus_D_minus, max_D_minus)
     min_taus_D, min_Ds = combine_two_envelopes(min_taus_D_plus, min_D_plus, min_taus_D_minus, min_D_minus)
-    plt.plot(max_taus_D, max_Ds, '-')
-    plt.plot(min_taus_D, min_Ds, '--')
-    plt.plot(all_taus[1], all_D_t_minus_taus[1], ':')
+    plt.plot(max_taus_D, max_Ds, '-', color="tab:red")
+    plt.plot(min_taus_D, min_Ds, '--', color="tab:purple")
+    plt.plot(all_taus[1], all_D_ts[1], ':', color="tab:brown")
 
 
     plt.annotate(r'$34\ K$', xy =(all_taus[0][math.floor(0.75*len(all_taus[0]))], 0.7))
@@ -186,10 +189,10 @@ def main():
     plt.subplot(1, 2, 2)
     plt.plot(all_taus[2], all_D_pluses[2], '-')
     plt.plot(all_taus[2], all_D_minuses[2], '--')
-    plt.plot(all_taus[2], all_D_t_minus_taus[2], ':')
+    plt.plot(all_taus[2], all_D_ts[2], ':')
     plt.plot(all_taus[3], all_D_pluses[3], '-')
     plt.plot(all_taus[3], all_D_minuses[3], '--')
-    plt.plot(all_taus[3], all_D_t_minus_taus[3], ':')
+    plt.plot(all_taus[3], all_D_ts[3], ':')
 
     plt.annotate(r'$34\ K$', xy =(all_taus[2][math.floor(0.75*len(all_taus[2]))], 0.7))
     plt.annotate(r'$70\ K$', xy =(all_taus[2][math.floor(0.75*len(all_taus[2]))], 0.2))

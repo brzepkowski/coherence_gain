@@ -56,7 +56,7 @@ def main():
                     taus = []
                     D_pluses = []
                     D_minuses = []
-                    D_t_minus_taus = []
+                    D_ts = []
                     p_pluses = []
                     p_minuses = []
                     pure_phases_real = []
@@ -74,7 +74,7 @@ def main():
                             g_av = float(splitted_line[1])
                             D_plus = float(splitted_line[2])
                             D_minus = float(splitted_line[3])
-                            D_t_minus_tau = float(splitted_line[4])
+                            D_t = float(splitted_line[4])
                             p_plus = float(splitted_line[5])
                             p_minus = float(splitted_line[6])
                             pure_phase = splitted_line[7].replace('(', '').replace(')', '').split(',')
@@ -83,14 +83,14 @@ def main():
                             # print("pure_phase: ", pure_phase)
 
                             # Normalize g_av
-                            g_av /= (1 - D_t_minus_tau)
+                            g_av /= (1 - D_t)
                             g_av *= 100
 
                             taus.append(tau)
                             g_avs.append(g_av)
                             D_pluses.append(D_plus)
                             D_minuses.append(D_minus)
-                            D_t_minus_taus.append(D_t_minus_tau)
+                            D_ts.append(D_t)
                             p_pluses.append(p_plus)
                             p_minuses.append(p_minus)
                             pure_phases_real.append(pure_phase.real)
@@ -115,16 +115,16 @@ def main():
     # plt.plot(all_taus[1], all_g_avs[1], '-', label=all_labels[1], color='C4')
 
     # Extract envelopes
-    min_taus_g_av_0, min_g_avs_0, max_taus_g_av_0, max_g_avs_0 = envelopes(all_taus[0], all_g_avs[0], epsilon_min=1e-4, epsilon_max=1e-8, diff=0.015)
-    min_taus_g_av_0, min_g_avs_0 = smooth_data(min_taus_g_av_0, min_g_avs_0)
-    min_taus_g_av_0, min_g_avs_0 = smooth_data_2(min_taus_g_av_0, min_g_avs_0, 100)
-    max_taus_g_av_0, max_g_avs_0 = smooth_data_2(max_taus_g_av_0, max_g_avs_0, 30)
+    min_taus_g_av_0, min_g_avs_0, max_taus_g_av_0, max_g_avs_0 = envelopes(all_taus[0], all_g_avs[0], epsilon_min=1e-4, epsilon_max=1e-8, diff=0.075)
+    # min_taus_g_av_0, min_g_avs_0 = smooth_data(min_taus_g_av_0, min_g_avs_0)
+    # min_taus_g_av_0, min_g_avs_0 = smooth_data_2(min_taus_g_av_0, min_g_avs_0, 100)
+    # max_taus_g_av_0, max_g_avs_0 = smooth_data_2(max_taus_g_av_0, max_g_avs_0, 30)
     plt.plot(max_taus_g_av_0, max_g_avs_0, '-', color='#1f77b4')
     plt.plot(min_taus_g_av_0, min_g_avs_0, '-', color='#1f77b4')
 
     # Extract envelopes
     min_taus_g_av_1, min_g_avs_1, max_taus_g_av_1, max_g_avs_1 = envelopes(all_taus[1], all_g_avs[1], epsilon_min=1e-4, epsilon_max=1e-8, diff=0.015)
-    min_taus_g_av_1, min_g_avs_1 = smooth_data_2(min_taus_g_av_1, min_g_avs_1, 20)
+    # min_taus_g_av_1, min_g_avs_1 = smooth_data_2(min_taus_g_av_1, min_g_avs_1, 20)
     plt.plot(max_taus_g_av_1, max_g_avs_1, '--', color='#ff7f0e')
     plt.plot(min_taus_g_av_1, min_g_avs_1, '--', color='#ff7f0e')
 
@@ -138,7 +138,7 @@ def main():
     plt.locator_params(axis='x', nbins=5)
     plt.tick_params(axis='x', pad=15, labelsize=tick_size)
     plt.tick_params(axis='y', labelsize=tick_size)
-    # plt.ylim([-0.1, 0.1])
+    plt.ylim([-0.2, 8])
     plt.locator_params(axis='y', nbins=5)
 
     # Add inset
@@ -168,10 +168,10 @@ def main():
     plt.ylim([0, 8])
     plt.locator_params(axis='y', nbins=5)
 
-    plt.tight_layout()
+    # plt.tight_layout()
     filename = 'g_av_vs_tau_t=' + t_time_string + '_subplots.pdf'
-    plt.savefig(filename, bbox_inches='tight')
-    # plt.show()
+    # plt.savefig(filename, bbox_inches='tight')
+    plt.show()
     # plt.clf()
 
 

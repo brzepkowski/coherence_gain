@@ -3,7 +3,7 @@ program main
     implicit none
     real :: t_time, tau_time, tau_time_start, tau_time_step, T_temp
     real :: p_plus, p_minus
-    real :: D_plus, D_minus, D_t_minus_tau
+    real :: D_plus, D_minus, D_t
     real :: g_av
     double complex :: W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     double complex :: pure_phase
@@ -56,10 +56,10 @@ program main
         print *, iterator, " / ", number_of_iterations
         tau_time = tau_time_start + tau_time_step*iterator
         call g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_3,phase, &
-            D_plus,D_minus,D_t_minus_tau,p_plus,p_minus,g_av)
+            D_plus,D_minus,D_t,p_plus,p_minus,g_av)
 
         pure_phase = exp(i*E*tau_time/h_bar)
-        write(1,*) tau_time, g_av, D_plus, D_minus, D_t_minus_tau, p_plus, p_minus, pure_phase
+        write(1,*) tau_time, g_av, D_plus, D_minus, D_t, p_plus, p_minus, pure_phase
     end do
 
 end program main

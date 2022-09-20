@@ -8,7 +8,7 @@ module coherence_gain
     real, parameter :: c = 5.1 ! [nm/ps]
     real, parameter :: rho = 33454.4886 ! [meV⋅ps/nm] = 5360 [kg/m^3]
     real, parameter :: k_B = 0.08617333262145 ! [meV/K]
-    real, parameter :: E = 1000 ! + 0.01046250062870621 # [meV] = 1 eV + sum |g_k|^2 <---- RECALCULATE ADDED VALUE!!!
+    real, parameter :: E = 1000 ! + 6.57378361E-02 ! [meV] = 1 eV + sum |g_k|^2. The second part is negligible in comparison to the first one, so we are omiting it.
     real(kind=8), parameter :: pi=4.D0*datan(1.D0)
 
 contains
@@ -289,7 +289,7 @@ real function W_two_parts_imag_0(theta, r, t_time, tau_time)
     implicit none
     real :: theta, r, t_time, tau_time
 
-    W_two_parts_imag_0 =  sin(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau_time)) + sin(c*r*(t_time-(2*tau_time))))
+    W_two_parts_imag_0 =  sin(theta) * r * gaussian_squared(theta, r) * ((2*sin(c*r*tau_time)) + sin(c*r*(t_time-tau_time)))
 end function W_two_parts_imag_0
 
 ! Real helper functions
@@ -346,7 +346,7 @@ real function W_two_parts_real_0(theta, r, t_time, tau_time, T_temp)
     real :: theta, r, t_time, tau_time, T_temp
 
     W_two_parts_real_0 = sin(theta) * r * gaussian_squared(theta, r)
-    W_two_parts_real_0=W_two_parts_real_0*((2*cos(c*r*tau_time))+(2*cos(c*r*(t_time-tau_time)))-cos(c*r*(t_time-(2*tau_time)))-3)
+    W_two_parts_real_0=W_two_parts_real_0*((2*cos(c*r*tau_time))+(2*cos(c*r*t_time))-cos(c*r*(t_time-tau_time))-3)
     W_two_parts_real_0 = W_two_parts_real_0 * (1 + (2*n_k(T_temp, r)))
 end function W_two_parts_real_0
 
@@ -423,7 +423,7 @@ real function W_three_parts_imag_0(theta, r, t_time, tau_time)
     real :: theta, r, t_time, tau_time
 
     W_three_parts_imag_0 = sin(theta) * r * gaussian_squared(theta, r)
-    W_three_parts_imag_0=W_three_parts_imag_0*((2*sin(c*r*tau_time))+(2*sin(c*r*(t_time-(2*tau_time))))-sin(c*r*(t_time-tau_time)))
+    W_three_parts_imag_0=W_three_parts_imag_0*((2*sin(c*r*tau_time))+(2*sin(c*r*(t_time-tau_time)))-sin(c*r*t_time))
 end function W_three_parts_imag_0
 
 ! Real helper functions
@@ -479,7 +479,7 @@ real function W_three_parts_real_0(theta, r, t_time, tau_time, T_temp)
     implicit none
     real :: theta, r, t_time, tau_time, T_temp
 
-    W_three_parts_real_0 = sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*(t_time-tau_time)) - 1)*(1 + (2*n_k(T_temp, r)))
+    W_three_parts_real_0 = sin(theta) * r * gaussian_squared(theta, r) * (cos(c*r*t_time) - 1)*(1 + (2*n_k(T_temp, r)))
 end function W_three_parts_real_0
 
 
@@ -488,21 +488,20 @@ end function W_three_parts_real_0
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_3,phase, &
-	D_plus,D_minus,D_t_minus_tau,p_plus,p_minus,g_av)
+	D_plus,D_minus,D_t,p_plus,p_minus,g_av)
     implicit none
     real :: t_time, tau_time, T_temp
     real :: p_plus, p_minus, denominator_plus, denominator_minus
-    real :: D_plus, D_minus, D_t_minus_tau
+    real :: D_plus, D_minus, D_t
     real :: g_plus, g_minus, g_av
-		real :: licznik_plus, licznik_minus, mianownik_plus, mianownik_minus
-    double complex :: W_t_minus_tau, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
+    double complex :: W_t, W_tau, W_0, W_1, W_1_phased, W_2, W_2_phased, W_3, phase
     double complex, parameter :: i = cmplx(0, 1)
 
-    W_t_minus_tau = W_one_part(t_time-tau_time, T_temp)
+    W_t = W_one_part(t_time, T_temp)
     W_tau = W_one_part(tau_time, T_temp)
 
-    W_0 = W_one_part(t_time-tau_time, T_temp)
-    W_1 = W_one_part(t_time-(2*tau_time), T_temp)
+    W_0 = W_one_part(t_time, T_temp)
+    W_1 = W_one_part(t_time-tau_time, T_temp)
 		W_1_phased = exp(-i*E*tau_time/h_bar)*W_1
     W_2 = W_two_parts(t_time, tau_time, T_temp)
 		W_2_phased = exp(i*E*tau_time/h_bar)*W_2
@@ -514,10 +513,10 @@ subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_
     denominator_plus = abs(p_plus)
     denominator_minus = abs(p_minus)
 
-    D_plus = abs(0.25*(W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 + W_3))/denominator_plus
-		D_minus = abs(0.25*(-W_0 + exp(-i*E*tau_time/h_bar)*W_1 + exp(i*E*tau_time/h_bar)*W_2 - W_3))/denominator_minus
+    D_plus = abs(0.25*(W_0 + W_1_phased + W_2_phased + W_3))/denominator_plus
+		D_minus = abs(0.25*(W_0 - W_1_phased - W_2_phased + W_3))/denominator_minus
 
-    D_t_minus_tau = abs(W_t_minus_tau)
+    D_t = abs(W_t)
 
 		if ((D_plus > 1.0) .or. (D_plus < 0.0)) then
 			print *, "Improper value of 'D_plus': ", D_plus
@@ -527,8 +526,8 @@ subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_
 			print *, "Improper value of 'D_minus': ", D_minus
 		endif
 
-		if ((D_t_minus_tau > 1.0) .or. (D_t_minus_tau < 0.0)) then
-			print *, "Improper value of 'D_t_minus_tau': ", D_t_minus_tau
+		if ((D_t > 1.0) .or. (D_t < 0.0)) then
+			print *, "Improper value of 'D_t': ", D_t
 		endif
 
 		! print *, "W_0:"
@@ -566,11 +565,11 @@ subroutine g_average(t_time,tau_time,T_temp,W_0,W_1,W_1_phased,W_2,W_2_phased,W_
 		! print *, "D_minus:"
 		! print *, D_minus
 		!
-		! print *, "D_t_minus_tau:"
-		! print *, D_t_minus_tau
+		! print *, "D_t:"
+		! print *, D_t
 
-    g_plus = (D_plus - D_t_minus_tau) ! /(1-D_t_minus_tau)
-    g_minus = (D_minus - D_t_minus_tau) ! /(1-D_t_minus_tau)
+    g_plus = (D_plus - D_t) ! /(1-D_t)
+    g_minus = (D_minus - D_t) ! /(1-D_t)
 
     g_av = (p_plus*g_plus) + (p_minus*g_minus)
 end subroutine g_average

@@ -1,37 +1,37 @@
 #!/bin/bash
 
-num_of_iterations=1000
+num_of_iterations=400000
 
-cd k=0.1282
-./k=0.1282.out 0.00 20.0 34.0 $num_of_iterations
+cd k_0_1282
+./k_0_1282.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=0.2564
-./k=0.2564.out 0.00 20.0 34.0 $num_of_iterations
+cd k_0_2564
+./k_0_2564.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=0.641
-./k=0.641.out 0.00 20.0 34.0 $num_of_iterations
+cd k_0_641
+./k_0_641.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=1.4102
-./k=1.4102.out 0.00 20.0 34.0 $num_of_iterations
+cd k_1_4102
+./k_1_4102.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=1.923
-./k=1.923.out 0.00 20.0 34.0 $num_of_iterations
+cd k_1_923
+./k_1_923.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=2.4358
-./k=2.4358.out 0.00 20.0 34.0 $num_of_iterations
+cd k_2_4358
+./k_2_4358.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=first_two
-./k=first_two.out 0.00 20.0 34.0 $num_of_iterations
+cd k_first_two
+./k_first_two.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=first_five
-./k=first_five.out 0.00 20.0 34.0 $num_of_iterations
+cd k_first_five
+./k_first_five.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=first_eleven
-./k=first_eleven.out 0.00 20.0 34.0 $num_of_iterations
+cd k_first_eleven
+./k_first_eleven.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=first_fifteen
-./k=first_fifteen.out 0.00 20.0 34.0 $num_of_iterations
+cd k_first_fifteen
+./k_first_fifteen.out 0.00 20.0 34.0 $num_of_iterations
 cd ..
-cd k=first_nineteen
-./k=first_nineteen.out 0.00 20.0 34.0 $num_of_iterations
+cd k_first_nineteen
+./k_first_nineteen.out 0.00 20.0 34.0 $num_of_iterations
 cd ..

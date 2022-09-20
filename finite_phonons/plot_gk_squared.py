@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 filename = sys.argv[1]
 
@@ -12,6 +13,7 @@ ys = []
 
 x = 0
 for line in lines:
+        # print("line: ", line)
         line_splitted = line.replace("\n", "").split(" | ")
         # print(line_splitted)
         k = line_splitted[0]
@@ -38,8 +40,54 @@ period = k_max / 2
 ks_final = np.arange(period, 2.5, period)
 print("ks_final: ", ks_final)
 
+selected_ks_filtered = [] # This list will store real values obtained during launching fortran caluclations
+selected_gk_squared_filtered = []
+for k in ks_final:
+    for i in range(len(xs)):
+        _k = xs[i]
+        if abs(k - _k) < 1e-6:
+            selected_ks_filtered.append(_k)
+            selected_gk_squared_filtered.append(ys[i])
+            break
 
+# print("selected_ks_filtered: ", selected_ks_filtered)
+# print("selected_gk_squared_filtered: ", selected_gk_squared_filtered)
 
-plt.plot(xs,ys, ".")
-plt.grid()
-plt.show()
+# fig = plt.figure(figsize=[12, 12])
+font_size = 25 # Changes the size of all fonts in the plot
+tick_size = 25 # Changes the size of all labels on axes in the plot
+plt.rc('font', size=font_size)
+plt.rcParams['mathtext.fontset'] = 'stix'
+plt.rcParams['font.family'] = 'STIXGeneral'
+
+ax = plt.subplot()
+
+# Add rectangles representing the sum approximating integral
+for i in range(len(selected_ks_filtered)):
+    k = selected_ks_filtered[i]
+    gk_squared = selected_gk_squared_filtered[i]
+    xy = (k - period/2, 0)# Anchor point
+    width = period
+    height = gk_squared
+    rectangle = Rectangle(xy, width, height, facecolor='0.9', edgecolor='0.5')
+    ax.add_patch(rectangle)
+
+ax.text(selected_ks_filtered[9] - (period/2) + 0.006, selected_gk_squared_filtered[9] + 0.003, r'$\}\alpha$', fontsize=19, rotation=90)
+
+plt.plot(xs,ys, "-")
+plt.plot(selected_ks_filtered, selected_gk_squared_filtered, '.')
+
+plt.ylabel(r'$ | f_{k} / \hbar \omega_{k} |^2\ [ ? ]$', fontsize=font_size)
+plt.xlabel(r'$ k\ [ kg \cdot m / s  ]$', fontsize=font_size)
+plt.ylim(0, 0.12)
+plt.xlim(xs[0], xs[-1])
+plt.tick_params(axis='both', labelsize=tick_size)
+# plt.grid()
+# plt.tight_layout()
+plt.subplots_adjust(left=0.22,
+                bottom=0.2,
+                right=0.97,
+                top=0.95,
+                wspace=0.02)
+plt.savefig("gk_squared.pdf")
+# plt.show()

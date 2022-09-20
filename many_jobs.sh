@@ -1,30 +1,24 @@
 #!/bin/bash
 
-gfortran coherence_gain.f90 g_av_vs_tau.f90 *.f
+# gfortran g_av_vs_t.f90 coherence_gain.f90 *.f -fallow-argument-mismatch -o g_av_vs_tau.out
 
-# ./a.out 0.00 20.0 34.0 400000
-# ./a.out 4.00 20.0 34.0 1000
+# ./g_av_vs_tau.out 0.00 20.0 34.0 400000
+# ./g_av_vs_tau.out 4.00 20.0 34.0 1000
 #
-# ./a.out 0.00 20.0 70.0 400000
-# ./a.out 4.00 20.0 70.0 1000
-
-./a.out 0.00 0.5 34.0 50000
-./a.out 0.00 1.0 34.0 100000
-./a.out 0.00 1.5 34.0 150000
-./a.out 0.00 2.0 34.0 200000
-./a.out 0.00 2.5 34.0 250000
+# ./g_av_vs_tau.out 0.00 20.0 70.0 400000
+# ./g_av_vs_tau.out 4.00 20.0 70.0 1000
 
 
-gfortran coherence_gain.f90 g_av_vs_t.f90 *.f
+# gfortran g_av_vs_t.f90 coherence_gain.f90 *.f -fallow-argument-mismatch -o g_av_vs_t.out
 
-# ./a.out MAX 4.00021982 4.00021982 34.0 1000000
-# ./a.out MIN 4.0012598 4.0012598 34.0 1000000
+./g_av_vs_t.out MAX 4.00021982 0.00 34.0 1000000
+./g_av_vs_t.out MIN 4.0012598 0.00 34.0 1000000
 #
-# ./a.out MAX 4.00021982 4.00021982 70.0 1000000
-# ./a.out MIN 4.0012598 4.0012598 70.0 1000000
+./g_av_vs_t.out MAX 4.00021982 0.00 70.0 1000000
+./g_av_vs_t.out MIN 4.0012598 0.00 70.0 1000000
 
-./a.out MAX 0.424919993 0.424919993 34.0 1000000
-./a.out MIN 0.423879981 0.423879981 34.0 1000000
+./g_av_vs_t.out MAX 0.424919993 0.00 34.0 1000000
+./g_av_vs_t.out MIN 0.423879981 0.00 34.0 1000000
 
-./a.out MAX 0.424919993 0.424919993 70.0 1000000
-./a.out MIN 0.423879981 0.423879981 70.0 1000000
+./g_av_vs_t.out MAX 0.424919993 0.00 70.0 1000000
+./g_av_vs_t.out MIN 0.423879981 0.00 70.0 1000000

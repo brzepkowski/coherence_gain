@@ -3,11 +3,10 @@ import numpy as np
 import sys, os, glob
 import math
 
-def smooth_data(taus_raw, Ds_plus_raw, Ds_minus_raw, Ds_t_minus_tau_raw):
-    epsilon = 1e-3
+def smooth_data(taus_raw, Ds_plus_raw, Ds_minus_raw, Ds_t_raw, epsilon=5e-3):
     Ds_plus = []
     Ds_minus = []
-    Ds_t_minus_tau = []
+    Ds_t = []
     taus = []
     # multipliers = np.linspace(0, 2, len(taus_raw))
     multipliers = np.linspace(0, 3, len(taus_raw))
@@ -15,17 +14,17 @@ def smooth_data(taus_raw, Ds_plus_raw, Ds_minus_raw, Ds_t_minus_tau_raw):
         tau = taus_raw[i]
         D_plus = Ds_plus_raw[i]
         D_minus = Ds_minus_raw[i]
-        D_t_minus_tau = Ds_t_minus_tau_raw[i]
+        D_t = Ds_t_raw[i]
         multiplier = math.exp(-multipliers[i])
         if len(Ds_plus) == 0 or (abs(D_plus - Ds_plus[-1]) < multiplier*epsilon
             and abs(D_minus - Ds_minus[-1]) < multiplier*epsilon
-            and abs(D_t_minus_tau - Ds_t_minus_tau[-1]) < multiplier*epsilon):
+            and abs(D_t - Ds_t[-1]) < multiplier*epsilon):
             taus.append(tau)
             Ds_plus.append(D_plus)
             Ds_minus.append(D_minus)
-            Ds_t_minus_tau.append(D_t_minus_tau)
+            Ds_t.append(D_t)
 
-    return taus, Ds_plus, Ds_minus, Ds_t_minus_tau
+    return taus, Ds_plus, Ds_minus, Ds_t
 
 
 def main():
@@ -53,7 +52,7 @@ def main():
     W_3s = []
     Ds_plus = []
     Ds_minus = []
-    Ds_t_minus_tau = []
+    Ds_t = []
     ps_plus = []
     ps_minus = []
     pure_phases = []
@@ -65,8 +64,9 @@ def main():
         filename_postfix = ".dat"
         os.chdir("./")
 
-        filename_tau_min_prefix = "g_av_vs_t_MIN_T=" + T_temp_string + "_" + tau_min_string + "_" + tau_min_string + "_*"
-        filename_tau_max_prefix = "g_av_vs_t_MAX_T=" + T_temp_string + "_" + tau_max_string + "_" + tau_max_string + "_*"
+        # Below we assume, that the values on x axis (the t_time) starts at 0
+        filename_tau_min_prefix = "g_av_vs_t_MIN_T=" + T_temp_string + "_" + tau_min_string + "_0.00_*"
+        filename_tau_max_prefix = "g_av_vs_t_MAX_T=" + T_temp_string + "_" + tau_max_string + "_0.00_*"
 
         for filename_prefix in [filename_tau_min_prefix, filename_tau_max_prefix]:
             print("filename_prefix: ", filename_prefix)
@@ -86,7 +86,7 @@ def main():
                     W_3s_partial = []
                     Ds_plus_partial = []
                     Ds_minus_partial = []
-                    Ds_t_minus_tau_partial = []
+                    Ds_t_partial = []
                     ps_plus_partial = []
                     ps_minus_partial = []
                     pure_phases_partial = []
@@ -96,7 +96,6 @@ def main():
                         if line != "\n":
                             splitted_line = line.split()
                             t_time = float(splitted_line[0])
-                            t_minus_tau = t_time - tau_min
                             g_av = float(splitted_line[1])
                             # print("splitted_line[2]: ", splitted_line[2])
                             W_0 = splitted_line[2].replace("(", "").replace(")", "").split(",")
@@ -116,18 +115,16 @@ def main():
                             W_3 = complex(float(W_3[0]), float(W_3[1]))
                             D_plus = float(splitted_line[8])
                             D_minus = float(splitted_line[9])
-                            D_t_minus_tau = float(splitted_line[10])
+                            D_t = float(splitted_line[10])
                             p_plus = float(splitted_line[11])
                             p_minus = float(splitted_line[12])
                             pure_phase = splitted_line[13].replace("(", "").replace(")", "").split(",")
                             pure_phase = complex(float(pure_phase[0]), float(pure_phase[1]))
 
-                            # if t_minus_tau > 4.0-1e-4:
-                            if t_minus_tau > 8.0-1e-4:
-                                print("t_minus_tau: ", t_minus_tau, " -> breaking")
+                            if t_time >= 7.999:
                                 break
 
-                            xs_partial.append(t_minus_tau)
+                            xs_partial.append(t_time)
                             g_avs_partial.append(g_av)
                             W_0s_partial.append(W_0)
                             W_1s_partial.append(W_1)
@@ -137,7 +134,7 @@ def main():
                             W_3s_partial.append(W_3)
                             Ds_plus_partial.append(D_plus)
                             Ds_minus_partial.append(D_minus)
-                            Ds_t_minus_tau_partial.append(D_t_minus_tau)
+                            Ds_t_partial.append(D_t)
                             ps_plus_partial.append(p_plus)
                             ps_minus_partial.append(p_minus)
                             pure_phases_partial.append(pure_phase)
@@ -154,7 +151,7 @@ def main():
                     W_3s.append(W_3s_partial)
                     Ds_plus.append(Ds_plus_partial)
                     Ds_minus.append(Ds_minus_partial)
-                    Ds_t_minus_tau.append(Ds_t_minus_tau_partial)
+                    Ds_t.append(Ds_t_partial)
                     ps_plus.append(ps_plus_partial)
                     ps_minus.append(ps_minus_partial)
                     pure_phases.append(pure_phases_partial)
@@ -177,23 +174,23 @@ def main():
 
     plt.subplot(1, 2, 1)
     # tau_min values
-    xs[0], Ds_plus[0], Ds_minus[0], Ds_t_minus_tau[0] = smooth_data(xs[0], Ds_plus[0], Ds_minus[0], Ds_t_minus_tau[0])
+    xs[0], Ds_plus[0], Ds_minus[0], Ds_t[0] = smooth_data(xs[0], Ds_plus[0], Ds_minus[0], Ds_t[0])
     plt.plot(xs[0], Ds_plus[0], "--", label=labels[0] + ", D_+$", color='C0')
     plt.plot(xs[0], Ds_minus[0], "--", label=labels[0] + ", D_-$", color='C0')
-    plt.plot(xs[0], Ds_t_minus_tau[0], ":", label=labels[0] + ", D$", color='C2')
+    plt.plot(xs[0], Ds_t[0], ":", label=labels[0] + ", D$", color='C2')
 
     # tau_max values
-    xs[1], Ds_plus[1], Ds_minus[1], Ds_t_minus_tau[1] = smooth_data(xs[1], Ds_plus[1], Ds_minus[1], Ds_t_minus_tau[1])
+    xs[1], Ds_plus[1], Ds_minus[1], Ds_t[1] = smooth_data(xs[1], Ds_plus[1], Ds_minus[1], Ds_t[1], epsilon=1e-2)
     plt.plot(xs[1], Ds_plus[1], "-", label=labels[1] + ", D_+$", color='C1')
     # plt.plot(xs[1], Ds_minus[1], "--", label=labels[1] + ", D_-$", color='C1') # This line overlaps with the D_+ plotted one line above
-    # plt.plot(xs[1], Ds_t_minus_tau[1], ":", label=labels[1] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
+    # plt.plot(xs[1], Ds_t[1], ":", label=labels[1] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
 
-    # plt.annotate(r'$34\ K$', xy =(3, 0.9))
-    plt.annotate(r'$34\ K$', xy =(6, 0.9))
+    # plt.annotate(r'$34\ K$', xy =(3.3, 0.9))
+    plt.annotate(r'$34\ K$', xy =(6.6, 0.9))
     # plt.title()
     plt.ylabel(r'$D$', fontsize=font_size)
     plt.ylim([0, 1])
-    plt.xlabel(r'$t - \tau\ [ps]$', fontsize=font_size)
+    plt.xlabel(r'$t\ [ps]$', fontsize=font_size)
     plt.xlim([min(xs[0]), max(xs[0])])
     plt.tick_params(axis='x', pad=15, labelsize=tick_size)
     plt.tick_params(axis='y', labelsize=tick_size)
@@ -204,23 +201,23 @@ def main():
 
     plt.subplot(1, 2, 2)
     # tau_min values
-    xs[2], Ds_plus[2], Ds_minus[2], Ds_t_minus_tau[2] = smooth_data(xs[2], Ds_plus[2], Ds_minus[2], Ds_t_minus_tau[2])
+    xs[2], Ds_plus[2], Ds_minus[2], Ds_t[2] = smooth_data(xs[2], Ds_plus[2], Ds_minus[2], Ds_t[2], epsilon=1e-2)
     plt.plot(xs[2], Ds_plus[2], "--", label=labels[2] + ", D_+$", color='C0')
     plt.plot(xs[2], Ds_minus[2], "--", label=labels[2] + ", D_-$", color='C0')
-    plt.plot(xs[2], Ds_t_minus_tau[2], ":", label=labels[2] + ", D$", color='C2')
+    plt.plot(xs[2], Ds_t[2], ":", label=labels[2] + ", D$", color='C2')
 
     # tau_max values
-    xs[3], Ds_plus[3], Ds_minus[3], Ds_t_minus_tau[3] = smooth_data(xs[3], Ds_plus[3], Ds_minus[3], Ds_t_minus_tau[3])
+    xs[3], Ds_plus[3], Ds_minus[3], Ds_t[3] = smooth_data(xs[3], Ds_plus[3], Ds_minus[3], Ds_t[3], epsilon=1e-2)
     plt.plot(xs[3], Ds_plus[3], "-", label=labels[3] + ", D_+$", color='C1')
     # plt.plot(xs[3], Ds_minus[3], "--", label=labels[3] + ", D_-$", color='C1') # This line overlaps with the D_+ plotted one line above
-    # plt.plot(xs[3], Ds_t_minus_tau[3], ":", label=labels[3] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
-    # plt.annotate(r'$70\ K$', xy =(3, 0.9))
-    plt.annotate(r'$70\ K$', xy =(6, 0.9))
+    # plt.plot(xs[3], Ds_t[3], ":", label=labels[3] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
+    # plt.annotate(r'$70\ K$', xy =(3.3, 0.9))
+    plt.annotate(r'$70\ K$', xy =(6.6, 0.9))
     # plt.title()
     # plt.ylabel(r'$D$')
     plt.ylim([0, 1])
     plt.yticks([])
-    plt.xlabel(r'$t - \tau\ [ps]$', fontsize=font_size)
+    plt.xlabel(r'$t\ [ps]$', fontsize=font_size)
     plt.xlim([min(xs[2]), max(xs[2])])
     plt.tick_params(axis='x', pad=15, labelsize=tick_size)
     # plt.locator_params(axis='x', nbins=4)

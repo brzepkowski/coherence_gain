@@ -31,13 +31,14 @@ def main():
     os.chdir("./")
     input_file_prefix = "g_av_vs_tau_T=" + T_temp_string + "_" + t_time_string + "_" + tau_time_string + "*"
     input_file_postfix = ".dat"
+    print("input_file_prefix: ", input_file_prefix)
     for filename in glob.glob(input_file_prefix):
         if input_file_postfix in filename:
             g_avs = []
             taus = []
             D_pluses = []
             D_minuses = []
-            D_t_minus_taus = []
+            D_ts = []
             p_pluses = []
             p_minuses = []
             pure_phases_real = []
@@ -54,7 +55,7 @@ def main():
                     g_av = float(splitted_line[1])
                     D_plus = float(splitted_line[2])
                     D_minus = float(splitted_line[3])
-                    D_t_minus_tau = float(splitted_line[4])
+                    D_t = float(splitted_line[4])
                     p_plus = float(splitted_line[5])
                     p_minus = float(splitted_line[6])
                     pure_phase = splitted_line[7].replace('(', '').replace(')', '').split(',')
@@ -62,20 +63,20 @@ def main():
                     pure_phase = complex(pure_phase[0], pure_phase[1])
                     # print("pure_phase: ", pure_phase)
 
-                    # # Normalize g_av
-                    # if abs(D_t_minus_tau - 1) > 1e-5:
-                    #     g_av /= (1 - D_t_minus_tau)
-                    #     g_av *= 100
-                    #     # pass
-                    # else:
-                    #     break
+                    # Normalize g_av
+                    if abs(D_t - 1) > 1e-5:
+                        g_av /= (1 - D_t)
+                        g_av *= 100
+                        # pass
+                    else:
+                        break
 
                     # print("splitted_line: ", splitted_line)
                     taus.append(tau)
                     g_avs.append(g_av)
                     D_pluses.append(D_plus)
                     D_minuses.append(D_minus)
-                    D_t_minus_taus.append(D_t_minus_tau)
+                    D_ts.append(D_t)
                     p_pluses.append(p_plus)
                     p_minuses.append(p_minus)
                     pure_phases_real.append(pure_phase.real)
@@ -93,7 +94,7 @@ def main():
                 axs[1].plot(taus, p_minuses, "-", label=r'$p_-$')
                 axs[2].plot(taus, D_pluses, "-", label=r'$D_+$')
                 axs[2].plot(taus, D_minuses, "-", label=r'$D_-$')
-                axs[2].plot(taus, D_t_minus_taus, "-", label=r'$D$')
+                axs[2].plot(taus, D_ts, "-", label=r'$D$')
                 axs[3].plot(taus, pure_phases_real, "-", label=r'$Re(exp(iE\tau)/\hbar))$')
                 axs[3].plot(taus, pure_phases_imag, "-", label=r'$Im(exp(iE\tau)/\hbar))$')
 

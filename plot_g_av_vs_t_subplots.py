@@ -3,13 +3,17 @@ import numpy as np
 import sys, os, glob
 
 def main():
-    tau_min_0_string = "4.0012598"
-    tau_max_0_string = "4.00021982"
+    tau_min_0_string = "0.423879981"
+    tau_max_0_string = "0.424919993"
+    # tau_min_0_string = "4.0012598"
+    # tau_max_0_string = "4.00021982"
     T_temp_0_string = "34.0"
 
 
-    tau_min_1_string = "4.0012598"
-    tau_max_1_string = "4.00021982"
+    tau_min_1_string = "0.423879981"
+    tau_max_1_string = "0.424919993"
+    # tau_min_1_string = "4.0012598"
+    # tau_max_1_string = "4.00021982"
     T_temp_1_string = "70.0"
 
     xs = []
@@ -23,7 +27,7 @@ def main():
     W_3s = []
     Ds_plus = []
     Ds_minus = []
-    Ds_t_minus_tau = []
+    Ds_t = []
     ps_plus = []
     ps_minus = []
     pure_phases = []
@@ -35,8 +39,9 @@ def main():
         filename_postfix = ".dat"
         os.chdir("./")
 
-        filename_tau_min_prefix = "g_av_vs_t_MIN_T=" + T_temp_string + "_" + tau_min_string + "_" + tau_min_string + "_*"
-        filename_tau_max_prefix = "g_av_vs_t_MAX_T=" + T_temp_string + "_" + tau_max_string + "_" + tau_max_string + "_*"
+        # Below we assume, that the values on x axis (the t_time) starts at 0
+        filename_tau_min_prefix = "g_av_vs_t_MIN_T=" + T_temp_string + "_" + tau_min_string + "_0.00_*"
+        filename_tau_max_prefix = "g_av_vs_t_MAX_T=" + T_temp_string + "_" + tau_max_string + "_0.00_*"
 
         for filename_prefix in [filename_tau_min_prefix, filename_tau_max_prefix]:
             print("filename_prefix: ", filename_prefix)
@@ -56,7 +61,7 @@ def main():
                     W_3s_partial = []
                     Ds_plus_partial = []
                     Ds_minus_partial = []
-                    Ds_t_minus_tau_partial = []
+                    Ds_t_partial = []
                     ps_plus_partial = []
                     ps_minus_partial = []
                     pure_phases_partial = []
@@ -66,7 +71,6 @@ def main():
                         if line != "\n":
                             splitted_line = line.split()
                             t_time = float(splitted_line[0])
-                            t_minus_tau = t_time - tau_min
                             g_av = float(splitted_line[1])
                             # print("splitted_line[2]: ", splitted_line[2])
                             W_0 = splitted_line[2].replace("(", "").replace(")", "").split(",")
@@ -86,7 +90,7 @@ def main():
                             W_3 = complex(float(W_3[0]), float(W_3[1]))
                             D_plus = float(splitted_line[8])
                             D_minus = float(splitted_line[9])
-                            D_t_minus_tau = float(splitted_line[10])
+                            D_t = float(splitted_line[10])
                             p_plus = float(splitted_line[11])
                             p_minus = float(splitted_line[12])
                             pure_phase = splitted_line[13].replace("(", "").replace(")", "").split(",")
@@ -95,7 +99,7 @@ def main():
 
                             epsilon = 1e-4
                             if len(g_avs_partial) == 0 or abs(g_av - g_avs_partial[-1]) < epsilon:
-                                xs_partial.append(t_minus_tau)
+                                xs_partial.append(t_time)
                                 g_avs_partial.append(g_av)
                                 W_0s_partial.append(W_0)
                                 W_1s_partial.append(W_1)
@@ -105,7 +109,7 @@ def main():
                                 W_3s_partial.append(W_3)
                                 Ds_plus_partial.append(D_plus)
                                 Ds_minus_partial.append(D_minus)
-                                Ds_t_minus_tau_partial.append(D_t_minus_tau)
+                                Ds_t_partial.append(D_t)
                                 ps_plus_partial.append(p_plus)
                                 ps_minus_partial.append(p_minus)
                                 pure_phases_partial.append(pure_phase)
@@ -122,7 +126,7 @@ def main():
                     W_3s.append(W_3s_partial)
                     Ds_plus.append(Ds_plus_partial)
                     Ds_minus.append(Ds_minus_partial)
-                    Ds_t_minus_tau.append(Ds_t_minus_tau_partial)
+                    Ds_t.append(Ds_t_partial)
                     ps_plus.append(ps_plus_partial)
                     ps_minus.append(ps_minus_partial)
                     pure_phases.append(pure_phases_partial)
@@ -148,9 +152,9 @@ def main():
     plt.plot(xs[1], g_avs[1], "-", label=labels[1] + ", D_+$")
     # plt.annotate(r'$34\ K$', xy =(8, 0.9))
     # plt.title()
-    plt.ylabel(r'$g_av$')
+    plt.ylabel(r'$g_{av}$')
     # plt.ylim([0, 1])
-    plt.xlabel(r'$t - \tau\ [ps]$')
+    plt.xlabel(r'$t\ [ps]$')
     plt.xlim([min(xs[0]), max(xs[0])])
     plt.tick_params(axis='x', pad=15)
     # plt.locator_params(axis='x', nbins=10)
@@ -165,7 +169,7 @@ def main():
     # plt.ylabel(r'$D$')
     # plt.ylim([0, 1])
     # plt.yticks([])
-    plt.xlabel(r'$t - \tau\ [ps]$')
+    plt.xlabel(r'$t\ [ps]$')
     plt.xlim([min(xs[2]), max(xs[2])])
     plt.tick_params(axis='x', pad=15)
     plt.locator_params(axis='x', nbins=10)
@@ -175,8 +179,8 @@ def main():
 
     plt.tight_layout()
     filename_plot = "g_av_vs_t_tau=" + str(round(float(tau_min_0_string),2)) + "_subplots.pdf"
-    plt.savefig(filename_plot)
-    # plt.show()
+    # plt.savefig(filename_plot)
+    plt.show()
     plt.clf()
 
 if __name__ == '__main__':

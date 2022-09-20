@@ -131,10 +131,12 @@ dmypy.json
 # Pickle
 *.pkl
 *.png
-*.pdf
 *.csv
 *.pickle
 
 # Files storing results
 *.dat
 *.txt
+
+# Executables
+*.out
