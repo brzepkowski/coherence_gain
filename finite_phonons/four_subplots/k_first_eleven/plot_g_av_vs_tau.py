@@ -86,7 +86,7 @@ def add_subplot(axes):
             plt.annotate(r'$k \in \{k_0, k_1, ..., k_{10} \}$', (3.96, 30.0), horizontalalignment='right')
             # plt.annotate(r'$d)$', (3.84, -18.0), horizontalalignment='right')
             axes[1, 1].text(
-                3.88, -16.5, r'$d)$', ha="right", va="center", size=35,
+                3.88, -16.5, r'$(d)$', ha="right", va="center", size=35,
                 bbox=dict(boxstyle="square,pad=0.1", facecolor='none'))
 
             return axes

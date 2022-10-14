@@ -77,7 +77,7 @@ for i in range(len(selected_ks_filtered)):
 plt.plot(xs,ys, "-")
 plt.plot(selected_ks_filtered, selected_gk_squared_filtered, '.')
 
-plt.ylabel(r'$ G(k) \ [nm\ 10^{-2}]$', fontsize=font_size)
+plt.ylabel(r'$ G(k) \ [10^{-2}\ nm]$', fontsize=font_size)
 plt.xlabel(r'$ k\ [ nm^{-1} ]$', fontsize=font_size)
 plt.ylim(0, 0.12)
 plt.xlim(xs[0], xs[-1])
