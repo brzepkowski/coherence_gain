@@ -105,7 +105,7 @@ def main():
 
     fig = plt.figure(figsize=[10, 12])
     font_size = 25 # Changes the size of all fonts in the plot
-    tick_size = 20 # Changes the size of all labels on axes in the plot
+    tick_size = 25 # Changes the size of all labels on axes in the plot
     plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
@@ -170,8 +170,8 @@ def main():
 
     # plt.tight_layout()
     filename = 'g_av_vs_tau_t=' + t_time_string + '_subplots.pdf'
-    # plt.savefig(filename, bbox_inches='tight')
-    plt.show()
+    plt.savefig(filename, bbox_inches='tight')
+    # plt.show()
     # plt.clf()
 
 

@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import sys, os, glob
 from .envelopes import envelopes
 
-def add_subplot(figure, ax):
+def add_subplot(axes):
 
     tau_time_string = "0.00"
     t_time_string = "20.0"
@@ -67,25 +67,28 @@ def add_subplot(figure, ax):
                     break
             input_file.close()
 
-            ax = figure.add_subplot(2, 2, 2, sharex=ax)
-
             # Extract envelopes
             min_taus_g_av_0, min_g_avs_0, max_taus_g_av_0, max_g_avs_0 = envelopes(taus, g_avs, epsilon_min=1e-4, epsilon_max=1e-3, diff=0.41)
 
-            # plt.plot(taus, g_avs, "-", color='red')
+            plt.sca(axes[0, 1])
 
             # Plot envelopes
             plt.plot(min_taus_g_av_0, min_g_avs_0, "-", color='#1f77b4')
             plt.plot(max_taus_g_av_0, max_g_avs_0, "-", color='#1f77b4')
             plt.xlim(0, max(min_taus_g_av_0[-1], max_taus_g_av_0[-1]))
-            plt.xticks([0,1,2,3,4])
+            plt.xticks([])
             plt.ylim(-20.0, 35.0)
             plt.yticks([])
-            # plt.grid()
 
-            plt.annotate(r'$k = k_{10}$', (3.05, 28))
+            plt.axhline(y=0.0, color='black', linestyle='--')
 
-            return figure, ax
+            plt.annotate(r'$k = k_{10}$', (3.96, 30.0), horizontalalignment='right')
+            # plt.annotate(r'$b)$', (3.84, -18.2), horizontalalignment='right')
+            axes[0, 1].text(
+                3.7, -16.5, r'$b)$', ha="right", va="center", size=35,
+                bbox=dict(boxstyle="square,pad=0.1", facecolor='none'))
+
+            return axes
 
 
 if __name__ == '__main__':

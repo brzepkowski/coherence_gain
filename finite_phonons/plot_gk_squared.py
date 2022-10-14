@@ -54,8 +54,8 @@ for k in ks_final:
 # print("selected_gk_squared_filtered: ", selected_gk_squared_filtered)
 
 # fig = plt.figure(figsize=[12, 12])
-font_size = 25 # Changes the size of all fonts in the plot
-tick_size = 25 # Changes the size of all labels on axes in the plot
+font_size = 20 # Changes the size of all fonts in the plot
+tick_size = 20 # Changes the size of all labels on axes in the plot
 plt.rc('font', size=font_size)
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
@@ -72,22 +72,38 @@ for i in range(len(selected_ks_filtered)):
     rectangle = Rectangle(xy, width, height, facecolor='0.9', edgecolor='0.5')
     ax.add_patch(rectangle)
 
-ax.text(selected_ks_filtered[9] - (period/2) + 0.006, selected_gk_squared_filtered[9] + 0.003, r'$\}\alpha$', fontsize=19, rotation=90)
+# ax.text(selected_ks_filtered[9] - (period/2) - 0.015, selected_gk_squared_filtered[9] + 0.005, r'$\}\alpha$', fontsize=25, rotation=90)
 
 plt.plot(xs,ys, "-")
 plt.plot(selected_ks_filtered, selected_gk_squared_filtered, '.')
 
-plt.ylabel(r'$ | f_{k} / \hbar \omega_{k} |^2\ [ ? ]$', fontsize=font_size)
-plt.xlabel(r'$ k\ [ kg \cdot m / s  ]$', fontsize=font_size)
+plt.ylabel(r'$ G(k) \ [nm\ 10^{-2}]$', fontsize=font_size)
+plt.xlabel(r'$ k\ [ nm^{-1} ]$', fontsize=font_size)
 plt.ylim(0, 0.12)
 plt.xlim(xs[0], xs[-1])
 plt.tick_params(axis='both', labelsize=tick_size)
+
+plt.xticks([0, 0.15, 0.28, 0.4, 1, 2, 2.4], [0, r'$k_0$', r'$k_1$', r'    $k_2 \cdots$', 1, 2, r'$\cdots k_{18}$'])
+xticks = plt.xticks()[-1]
+xticks[1].set_fontsize(15)
+ax.xaxis.get_major_ticks()[1].tick1line.set_markersize(0)
+xticks[2].set_fontsize(15)
+ax.xaxis.get_major_ticks()[2].tick1line.set_markersize(0)
+xticks[3].set_fontsize(15)
+ax.xaxis.get_major_ticks()[3].tick1line.set_markersize(0)
+xticks[-1].set_fontsize(15)
+ax.xaxis.get_major_ticks()[-1].tick1line.set_markersize(0)
+
+# print(type(xticks[-1]))
+plt.yticks([0.05, 0.1], [5, 10])
+
+plt.vlines(selected_ks_filtered, list(np.zeros(len(selected_ks_filtered))), selected_gk_squared_filtered, colors='black', linestyles='--')
 # plt.grid()
-# plt.tight_layout()
-plt.subplots_adjust(left=0.22,
-                bottom=0.2,
-                right=0.97,
-                top=0.95,
-                wspace=0.02)
+plt.tight_layout()
+# plt.subplots_adjust(left=0.15,
+#                 bottom=0.18,
+#                 right=0.96,
+#                 top=0.9,
+#                 wspace=0.02)
 plt.savefig("gk_squared.pdf")
 # plt.show()

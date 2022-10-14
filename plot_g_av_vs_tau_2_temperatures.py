@@ -76,7 +76,7 @@ def main():
 
     # fig = plt.figure(figsize=[10, 12])
     font_size = 25 # Changes the size of all fonts in the plot
-    tick_size = 20 # Changes the size of all labels on axes in the plot
+    tick_size = 25 # Changes the size of all labels on axes in the plot
     plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'

@@ -28,17 +28,17 @@ def smooth_data(taus_raw, Ds_plus_raw, Ds_minus_raw, Ds_t_raw, epsilon=5e-3):
 
 
 def main():
-    # tau_min_0_string = "0.423879981"
-    # tau_max_0_string = "0.424919993"
-    tau_min_0_string = "4.0012598"
-    tau_max_0_string = "4.00021982"
+    tau_min_0_string = "0.423879981"
+    tau_max_0_string = "0.424919993"
+    # tau_min_0_string = "4.0012598"
+    # tau_max_0_string = "4.00021982"
     T_temp_0_string = "34.0"
 
 
-    # tau_min_1_string = "0.423879981"
-    # tau_max_1_string = "0.424919993"
-    tau_min_1_string = "4.0012598"
-    tau_max_1_string = "4.00021982"
+    tau_min_1_string = "0.423879981"
+    tau_max_1_string = "0.424919993"
+    # tau_min_1_string = "4.0012598"
+    # tau_max_1_string = "4.00021982"
     T_temp_1_string = "70.0"
 
     xs = []
@@ -121,7 +121,8 @@ def main():
                             pure_phase = splitted_line[13].replace("(", "").replace(")", "").split(",")
                             pure_phase = complex(float(pure_phase[0]), float(pure_phase[1]))
 
-                            if t_time >= 7.999:
+                            if t_time >= 3.999:
+                            # if t_time >= 7.999:
                                 break
 
                             xs_partial.append(t_time)
@@ -161,9 +162,9 @@ def main():
         labels.append(r"$\tau_{MIN}=" + tau_min_string + "\ T=" + T_temp_string)
         labels.append(r"$\tau_{MAX}=" + tau_max_string + "\ T=" + T_temp_string)
 
-    fig = plt.figure(figsize=[12, 6])
-    font_size = 25 # Changes the size of all fonts in the plot
-    tick_size = 25 # Changes the size of all labels on axes in the plot
+    fig = plt.figure(figsize=[12, 7.12])
+    font_size = 35 # Changes the size of all fonts in the plot
+    tick_size = 35 # Changes the size of all labels on axes in the plot
     plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
@@ -185,8 +186,8 @@ def main():
     # plt.plot(xs[1], Ds_minus[1], "--", label=labels[1] + ", D_-$", color='C1') # This line overlaps with the D_+ plotted one line above
     # plt.plot(xs[1], Ds_t[1], ":", label=labels[1] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
 
-    # plt.annotate(r'$34\ K$', xy =(3.3, 0.9))
-    plt.annotate(r'$34\ K$', xy =(6.6, 0.9))
+    plt.annotate(r'$34\ K$', xy =(3.05, 0.88))
+    # plt.annotate(r'$34\ K$', xy =(6.15, 0.88))
     # plt.title()
     plt.ylabel(r'$D$', fontsize=font_size)
     plt.ylim([0, 1])
@@ -194,8 +195,8 @@ def main():
     plt.xlim([min(xs[0]), max(xs[0])])
     plt.tick_params(axis='x', pad=15, labelsize=tick_size)
     plt.tick_params(axis='y', labelsize=tick_size)
-    # plt.locator_params(axis='x', nbins=4)
-    plt.locator_params(axis='x', nbins=8)
+    plt.locator_params(axis='x', nbins=4)
+    # plt.locator_params(axis='x', nbins=8)
     # plt.legend()
     # plt.grid()
 
@@ -211,8 +212,8 @@ def main():
     plt.plot(xs[3], Ds_plus[3], "-", label=labels[3] + ", D_+$", color='C1')
     # plt.plot(xs[3], Ds_minus[3], "--", label=labels[3] + ", D_-$", color='C1') # This line overlaps with the D_+ plotted one line above
     # plt.plot(xs[3], Ds_t[3], ":", label=labels[3] + ", D$", color='C2') # This line overlaps with the D line plotted 7 lines above
-    # plt.annotate(r'$70\ K$', xy =(3.3, 0.9))
-    plt.annotate(r'$70\ K$', xy =(6.6, 0.9))
+    plt.annotate(r'$70\ K$', xy =(3.05, 0.88))
+    # plt.annotate(r'$70\ K$', xy =(6.15, 0.88))
     # plt.title()
     # plt.ylabel(r'$D$')
     plt.ylim([0, 1])
@@ -220,16 +221,16 @@ def main():
     plt.xlabel(r'$t\ [ps]$', fontsize=font_size)
     plt.xlim([min(xs[2]), max(xs[2])])
     plt.tick_params(axis='x', pad=15, labelsize=tick_size)
-    # plt.locator_params(axis='x', nbins=4)
-    plt.locator_params(axis='x', nbins=8)
+    plt.locator_params(axis='x', nbins=4)
+    # plt.locator_params(axis='x', nbins=8)
     # plt.legend()
     # plt.grid()
 
 
     # plt.tight_layout()
-    plt.subplots_adjust(left=0.1,
-                    bottom=0.2,
-                    right=0.95,
+    plt.subplots_adjust(left=0.11,
+                    bottom=0.18,
+                    right=0.98,
                     top=0.95,
                     wspace=0.02)
     filename_plot = "D_vs_t_tau=" + str(round(float(tau_min_0_string),2)) + "_subplots.pdf"

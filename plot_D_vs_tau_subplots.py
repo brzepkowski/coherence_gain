@@ -127,9 +127,9 @@ def main():
                     all_D_ts.append(D_ts)
                     # all_labels.append("T = " + T_temp_string + " K, tau = " + tau_time_string)
 
-    fig = plt.figure(figsize=[12, 6])
-    font_size = 25 # Changes the size of all fonts in the plot
-    tick_size = 25 # Changes the size of all labels on axes in the plot
+    fig = plt.figure(figsize=[12, 7.12])
+    font_size = 35 # Changes the size of all fonts in the plot
+    tick_size = 35 # Changes the size of all labels on axes in the plot
     plt.rc('font', size=font_size)
     plt.rcParams['mathtext.fontset'] = 'stix'
     plt.rcParams['font.family'] = 'STIXGeneral'
@@ -205,9 +205,9 @@ def main():
     # plt.locator_params(axis='y', nbins=5)
 
     # plt.tight_layout()
-    plt.subplots_adjust(left=0.1,
-                    bottom=0.2,
-                    right=0.95,
+    plt.subplots_adjust(left=0.11,
+                    bottom=0.18,
+                    right=0.98,
                     top=0.95,
                     wspace=0.02)
     filename = 'D_vs_tau_t=' + t_time_string + '_subplots.pdf'

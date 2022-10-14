@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import sys, os, glob
 from .envelopes import envelopes
 
-def add_subplot(figure):
+def add_subplot(axes):
 
     tau_time_string = "0.00"
     t_time_string = "20.0"
@@ -67,27 +67,29 @@ def add_subplot(figure):
                     break
             input_file.close()
 
-            ax = figure.add_subplot(2, 2, 1) #, sharex=ax)
-
             # Extract envelopes
             min_taus_g_av_0, min_g_avs_0, max_taus_g_av_0, max_g_avs_0 = envelopes(taus, g_avs, epsilon_min=1e-4, epsilon_max=1e-3, diff=0.41)
 
-            # plt.plot(taus, g_avs, "-", color='red')
+            plt.sca(axes[0, 0])
 
             # Plot envelopes
             plt.plot(min_taus_g_av_0, min_g_avs_0, "-", color='#1f77b4')
             plt.plot(max_taus_g_av_0, max_g_avs_0, "-", color='#1f77b4')
-            # plt.title("T = " + T_temp_string + " K")
-            plt.ylabel(r'$g_{av}^\prime\ [\%]$')
-            plt.xlim(0, max(min_taus_g_av_0[-1], max_taus_g_av_0[-1]))
-            plt.xticks([0,1,2,3,4])
+            plt.ylabel(r'$g_{av}^\prime\ [\%]$', font="stix", fontsize=35)
+            plt.xlim(0, 10)
+            plt.xticks([])
             plt.ylim(-20.0, 35.0)
-            plt.yticks([-20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35])
-            # plt.grid()
+            plt.yticks([-20, -10, 0, 10, 20, 30], font="stix", fontsize=35)
 
-            plt.annotate(r'$k = k_1$', (3.1, 28))
+            plt.axhline(y=0.0, color='black', linestyle='--')
 
-            return figure, ax
+            plt.annotate(r'$k = k_1$', (9.9, 30.0), horizontalalignment='right')
+            # plt.annotate(r'$a)$', (9.6, -18.0), horizontalalignment='right')
+            axes[0, 0].text(
+                9.7, -16.5, r'$a)$', ha="right", va="center", size=35,
+                bbox=dict(boxstyle="square,pad=0.1", facecolor='none'))
+
+            return axes
 
 
 if __name__ == '__main__':
